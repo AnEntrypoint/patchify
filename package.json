@@ -1,0 +1,37 @@
+{
+  "name": "patchify",
+  "version": "1.0.0",
+  "description": "microKORG Patch Library Editor - Import, export, and organize your microKORG patches",
+  "main": "src/main.py",
+  "scripts": {
+    "start": "python src/main.py",
+    "dev": "npm run dev:frontend & npm run dev:backend",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:backend": "python src/main.py --dev",
+    "build": "cd frontend && npm run build",
+    "install:frontend": "cd frontend && npm install"
+  },
+  "dependencies": {
+    "python-rtmidi": "^1.5.8",
+    "flask": "^2.3.0",
+    "flask-cors": "^4.0.0",
+    "python-dotenv": "^1.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.0"
+  },
+  "keywords": [
+    "microkorg",
+    "synth",
+    "patch",
+    "editor",
+    "midi",
+    "synthesizer"
+  ],
+  "author": "Patchify Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-repo/patchify"
+  }
+}
