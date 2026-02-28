@@ -216,10 +216,9 @@ const server = serve({
 
         // GET /api/sysex/request - get dump request bytes for microKORG S
         if (url.pathname === '/api/sysex/request' && req.method === 'GET') {
-          const bytes = new Uint8Array([0xF0, 0x42, 0x30, 0x58, 0x41, 0xF7]);
-          const hex = Array.from(bytes).map(b => b.toString(16).padStart(2, '0').toUpperCase()).join(' ');
-          return new Response(JSON.stringify({ hex }), {
-            headers: { 'Content-Type': 'application/json' },
+          // microKORG S with correct function code 0x41
+          return new Response('{"hex":"F0 42 30 58 41 F7"}', {
+            headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache' },
           });
         }
       } catch (err) {
