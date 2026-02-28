@@ -1,37 +1,21 @@
 {
-  "name": "patchify",
+  "name": "patchify-bun",
   "version": "1.0.0",
-  "description": "microKORG Patch Library Editor - Import, export, and organize your microKORG patches",
-  "main": "src/main.py",
+  "description": "microKORG Synth Editor - Bun backend with Web Audio preview and MIDI support",
+  "module": "server/index.js",
+  "type": "module",
   "scripts": {
-    "start": "python src/main.py",
-    "dev": "npm run dev:frontend & npm run dev:backend",
-    "dev:frontend": "cd frontend && npm run dev",
-    "dev:backend": "python src/main.py --dev",
-    "build": "cd frontend && npm run build",
-    "install:frontend": "cd frontend && npm install"
+    "start": "bun run server/index.js",
+    "dev": "bun --watch server/index.js",
+    "build:frontend": "cd frontend && bun run build",
+    "install:frontend": "cd frontend && bun install",
+    "cli": "bun run cli/index.js"
   },
   "dependencies": {
-    "python-rtmidi": "^1.5.8",
-    "flask": "^2.3.0",
-    "flask-cors": "^4.0.0",
-    "python-dotenv": "^1.0.0"
+    "bun": "latest"
   },
-  "devDependencies": {
-    "nodemon": "^3.0.0"
-  },
-  "keywords": [
-    "microkorg",
-    "synth",
-    "patch",
-    "editor",
-    "midi",
-    "synthesizer"
-  ],
+  "devDependencies": {},
+  "keywords": ["synth", "microkorg", "bun", "web-audio", "midi"],
   "author": "Patchify Team",
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/your-repo/patchify"
-  }
+  "license": "MIT"
 }
