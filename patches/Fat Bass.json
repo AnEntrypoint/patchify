@@ -1,7 +1,7 @@
 {
   "name": "Fat Bass",
   "voice": {
-    "mode": "mono",
+    "mode": "Mono",
     "portamento": 0.05
   },
   "pitch": {
@@ -27,7 +27,7 @@
   "filter": {
     "type": "lowpass24",
     "cutoff": 300,
-    "resonance": 8,
+    "resonance": 1,
     "envAmount": 2500
   },
   "eg1_filter": {
@@ -60,29 +60,29 @@
   },
   "vPatch": [
     {
-      "src": "lfo2",
-      "dest": "pitch",
-      "int": 5
-    },
-    {
-      "src": "eg1",
-      "dest": "osc2_pitch",
-      "int": 10
-    },
-    {
       "src": "lfo1",
       "dest": "cutoff",
       "int": 0
     },
     {
-      "src": "lfo1",
-      "dest": "cutoff",
+      "src": "eg1",
+      "dest": "pitch",
+      "int": 0
+    },
+    {
+      "src": "lfo2",
+      "dest": "amp",
+      "int": 0
+    },
+    {
+      "src": "eg2",
+      "dest": "osc2_pitch",
       "int": 0
     }
   ],
   "modFx": {
     "speed": 2.5,
-    "depth": 40,
+    "depth": 1,
     "mix": 0.2
   },
   "delayFx": {
