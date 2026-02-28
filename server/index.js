@@ -39,11 +39,6 @@ const server = serve({
 
   async fetch(req) {
     const url = new URL(req.url);
-    console.log('FETCH:', req.method, url.pathname);
-    if (url.pathname === '/api/sysex/request') {
-      console.log('🚀 API SYSEX REQUEST ENDPOINT HIT');
-      return new Response(JSON.stringify({ TEST: 'IMMEDIATE RETURN', marker: true }), { headers: { 'Content-Type': 'application/json' } });
-    }
     cleanupWS();
 
     // API Routes
@@ -221,8 +216,10 @@ const server = serve({
 
         // GET /api/sysex/request - get dump request bytes for microKORG S
         if (url.pathname === '/api/sysex/request' && req.method === 'GET') {
-          return new Response('INVALID JSON FROM SERVER CODE', {
-            headers: { 'Content-Type': 'text/plain' },
+          const bytes = new Uint8Array([0xF0, 0x42, 0x30, 0x58, 0x41, 0xF7]);
+          const hex = Array.from(bytes).map(b => b.toString(16).padStart(2, '0').toUpperCase()).join(' ');
+          return new Response(JSON.stringify({ hex }), {
+            headers: { 'Content-Type': 'application/json' },
           });
         }
       } catch (err) {
