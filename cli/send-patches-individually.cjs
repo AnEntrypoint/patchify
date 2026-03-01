@@ -2,8 +2,7 @@
 
 /**
  * Send patches ONE-BY-ONE to microKORG S
- * Using correct 0x40 protocol with 7-bit encoding
- * Port detection from original working version
+ * Since bulk dumps don't work but individual patches do
  */
 
 const { spawn } = require('child_process');
@@ -53,57 +52,13 @@ class IndividualPatchSender {
     });
   }
 
-  encode7bit(data) {
-    // Correct 7-bit MIDI encoding per Korg spec:
-    // 7 bytes of 8-bit data → 8 bytes of 7-bit data
-    // Process in groups of 7 bytes
-    const result = [];
-
-    let i = 0;
-    while (i < data.length) {
-      // Get up to 7 bytes
-      const groupSize = Math.min(7, data.length - i);
-      const bytes = [];
-
-      for (let j = 0; j < groupSize; j++) {
-        bytes.push(data[i + j]);
-      }
-
-      // Extract MSBs (bit 7) from each byte
-      let msbs = 0;
-      for (let j = 0; j < groupSize; j++) {
-        if (bytes[j] & 0x80) {
-          msbs |= (1 << j);
-        }
-      }
-
-      // Output MSB byte (only lower 7 bits used)
-      result.push(msbs & 0x7F);
-
-      // Output remaining 7 bits of each byte
-      for (let j = 0; j < groupSize; j++) {
-        result.push(bytes[j] & 0x7F);
-      }
-
-      // If last group has fewer than 7 bytes, pad with a zero
-      if (groupSize < 7) {
-        result.push(0);
-      }
-
-      i += 7;
-    }
-
-    return Buffer.from(result);
-  }
-
   sendPatchIndividually(patchNum, patchData) {
     return new Promise((resolve) => {
-      // CORRECT PROTOCOL: F0 42 30 58 40 [7-bit encoded data] F7
-      // Based on verified alapatch implementation
-      const encoded = this.encode7bit(patchData);
-      const header = Buffer.from([0xF0, 0x42, 0x30, 0x58, 0x40]);
+      // Try function code 0x4C for individual patch send
+      // Format: F0 42 30 58 4C [patch data] F7
+      const header = Buffer.from([0xF0, 0x42, 0x30, 0x58, 0x4C]);
       const end = Buffer.from([0xF7]);
-      const sysex = Buffer.concat([header, encoded, end]);
+      const sysex = Buffer.concat([header, patchData, end]);
 
       const filename = `temp-patch-${patchNum}.syx`;
       fs.writeFileSync(filename, sysex);
