@@ -1,5 +1,10 @@
 #!/usr/bin/env node
 
+/**
+ * Monitor MIDI SysEx from loopMIDI input
+ * Captures patches sent from Korg Sound Editor
+ */
+
 const fs = require('fs');
 const path = require('path');
 const jazz = require('jazz-midi');
@@ -8,30 +13,39 @@ console.log('\n' + '='.repeat(70));
 console.log('🎹 MIDI SysEx Monitor - Listening for loopMIDI');
 console.log('='.repeat(70) + '\n');
 
-// List ports using jazz-midi API
-const inputList = new jazz.MidiInList();
+// Get MIDI ports
+const midi = new jazz.MIDI();
+const inputList = midi.MidiInList();
+const outputList = midi.MidiOutList();
+
 console.log('Available MIDI Input Ports:');
-for (let i = 0; i < inputList.length; i++) {
-  console.log(`  ${i}: ${inputList[i]}`);
+if (Array.isArray(inputList)) {
+  inputList.forEach((port, i) => {
+    console.log(`  ${i}: ${port}`);
+  });
+} else {
+  console.log('  (none found)');
 }
 
-// Find loopMIDI port
+// Find loopMIDI input port
 let loopMIDIPort = -1;
-for (let i = 0; i < inputList.length; i++) {
-  if (inputList[i].includes('loopMIDI')) {
-    loopMIDIPort = i;
-    console.log(`\n✅ Found loopMIDI at port ${i}`);
-    break;
+if (Array.isArray(inputList)) {
+  for (let i = 0; i < inputList.length; i++) {
+    if (inputList[i].includes('loopMIDI')) {
+      loopMIDIPort = i;
+      console.log(`\n✅ Found loopMIDI at input port ${i}`);
+      break;
+    }
   }
 }
 
 if (loopMIDIPort === -1) {
-  console.log('\n⚠️  loopMIDI not found');
-  console.log('   Available ports: ' + Array.from({length: inputList.length}, (_, i) => inputList[i]).join(', '));
+  console.log('\n❌ loopMIDI not found in input ports');
+  console.log('   Make sure loopMIDI is running and has a virtual port created');
   process.exit(1);
 }
 
-// Create input
+// Open MIDI input
 const input = new jazz.MIDI.Input();
 input.openPort(loopMIDIPort);
 
@@ -65,7 +79,8 @@ process.on('SIGINT', () => {
     console.log(`💾 Saved to: ${filename} (${allBytes.length} bytes)`);
   }
   
+  console.log('='.repeat(70) + '\n');
+  
   input.closePort();
   process.exit(0);
 });
-
