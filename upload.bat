@@ -1,0 +1,39 @@
+@echo off
+setlocal enabledelayedexpansion
+
+cls
+echo.
+echo ╔════════════════════════════════════════════════════════════════════════╗
+echo ║          🎹 microKORG Custom Patch Library Uploader                    ║
+echo ╚════════════════════════════════════════════════════════════════════════╝
+echo.
+
+REM Check if Bun is installed
+bun --version >nul 2>&1
+if errorlevel 1 (
+    echo ❌ Bun not found! Install from https://bun.sh
+    exit /b 1
+)
+
+REM Check if files exist
+if not exist "cli\upload-with-erriez.cjs" (
+    echo ❌ Uploader not found: cli\upload-with-erriez.cjs
+    exit /b 1
+)
+
+if not exist "patches\custom-library-2026-02-28.syx" (
+    echo ❌ Library file not found: patches\custom-library-2026-02-28.syx
+    echo    Run: bun run cli/create-custom-library.cjs
+    exit /b 1
+)
+
+REM Show file info
+echo 📦 Library File:
+echo    File: custom-library-2026-02-28.syx
+for %%A in (patches\custom-library-2026-02-28.syx) do echo    Size: %%~zA bytes
+echo.
+
+REM Run the uploader
+bun run cli\upload-with-erriez.cjs
+
+endlocal

@@ -1,253 +1,194 @@
-# Patchify - microKORG Patch Library Editor
+# 🎹 Patchify - microKORG Custom Patch Library
 
-A comprehensive tool for managing microKORG patches with intelligent sorting, exporting, and editing capabilities.
+Complete tool for uploading custom 128-patch libraries to your microKORG synthesizer.
 
-## Features
+## ⚡ Quick Start
 
-- 🎹 **Import/Export Patches**: Connect to your microKORG via MIDI and import/export patches directly
-- 📁 **File Management**: Support for SYSEX, PRG, and JSON file formats
-- 🎨 **Patch Editor**: Visual interface for editing all microKORG parameters
-- 🔍 **Smart Search**: Search patches by name, category, or parameters
-- 📊 **Organization**: Intelligent sorting and filtering of patches
-- 🔄 **MIDI Integration**: Real-time communication with microKORG
-- 📱 **Modern UI**: Clean, responsive interface built with React and Tailwind CSS
+### Upload Your Custom Library (30 seconds)
 
-## System Requirements
+1. **Windows**: Double-click `upload.bat`
+2. **macOS/Linux**: Run `bash upload.sh`
+3. **Manual**: `bun run cli/upload-with-erriez.cjs`
 
-- Windows 10/11, macOS 10.14+, or Linux
-- Python 3.8 or higher
-- Node.js 16 or higher
-- microKORG synthesizer with MIDI interface
+That's it! Your 128 custom patches will be loaded into your microKORG.
 
-## Installation
+## 📦 What's Included
 
-### 1. Clone the Repository
+**128 Custom PSY-Focused Patches**:
+- **Bank A**: 32 Bass patches
+  - Deep subs, punchy, FM, acid, wobble, reese, synth, etc.
+- **Bank B**: 16 Key patches
+  - E.pianos, organs, rhodes, harpsichords, synth keys
+- **Bank C**: 16 Pad patches
+  - Ambient, evolving, ethereal, lush, atmospheric
+- **Bank D**: 64 Psychedelic FX patches
+  - **Bubbles (8)** - Resonant bubble effects
+  - **Resonant (8)** - Filter sweeps and modulation
+  - **Spirals (8)** - Circular/vortex LFO patterns
+  - **Modulation (8)** - FM and chaotic modulation
+  - **Sweeps (8)** - Filter envelope madness
+  - **Granular (8)** - Grainy evolving textures
+  - **Delays (8)** - Echo and delay effects
+  - **Alien/Sci-Fi (8)** - Otherworldly sounds
 
+## 🎛️ Features of All Patches
+
+✨ **Sound Design**:
+- ✓ Heavy LFO modulation (Depth: 50-120, varied rates)
+- ✓ High resonance filters (Res: 5-127) for bubble/metallic effects
+- ✓ Sophisticated envelope shaping with custom ADSR
+- ✓ Delay effects with feedback (NO reverb)
+- ✓ NO arpeggiators enabled by default
+
+🎵 **Creative & Experimental**:
+- Psychedelic modulation patterns
+- Evolving textures and ambient soundscapes
+- Aggressive bubble and resonant peaks
+- FM synthesis chaos and frequency modulation
+- Atmospheric and spacey effects
+
+## ✅ Requirements
+
+- ✓ **microKORG** synthesizer (powered on)
+- ✓ **USB MIDI Interface** (e.g., Focusrite) connected
+- ✓ **Bun runtime**: `bun --version`
+- ✓ **Windows 10+** or **macOS/Linux**
+
+## 🚀 Upload Process
+
+### Step 1: Connect Hardware
+1. Connect microKORG via USB/MIDI to your computer
+2. Power on the microKORG
+3. Verify MIDI interface appears in system settings
+
+### Step 2: Run Uploader
+Choose one:
 ```bash
-git clone https://github.com/your-repo/patchify.git
-cd patchify
+# Windows - Double-click
+upload.bat
+
+# macOS/Linux - Bash script
+bash upload.sh
+
+# Any platform - Bun command
+bun run cli/upload-with-erriez.cjs
 ```
 
-### 2. Install Python Dependencies
+### Step 3: Confirm & Upload
+- Tool shows MIDI devices detected
+- Displays library contents
+- Asks for confirmation (type `yes`)
+- Sends all 128 patches (32KB)
+- Takes 10-30 seconds
 
-```bash
-pip install -r requirements.txt
-```
+### Step 4: Verify
+1. Wait 30 seconds for microKORG to reprogram
+2. Power cycle your microKORG
+3. Navigate through Banks A-D to see new patches
+4. Try Bank D - it's wild! 🎉
 
-### 3. Install Frontend Dependencies
-
-```bash
-cd frontend
-npm install
-cd ..
-```
-
-### 4. Install system dependencies for MIDI support
-
-**Windows:**
-- No additional dependencies needed
-
-**macOS:**
-```bash
-brew install python-rtmidi
-```
-
-**Linux:**
-```bash
-sudo apt-get install libasound2-dev libjack-dev
-```
-
-## Usage
-
-### Running in Development Mode
-
-1. Start the backend server:
-   ```bash
-   python src/main.py --dev
-   ```
-
-2. Start the frontend development server in a new terminal:
-   ```bash
-   cd frontend
-   npm run dev
-   ```
-
-3. Open your browser and navigate to `http://localhost:3000`
-
-### Running in Production Mode
-
-1. Build the frontend:
-   ```bash
-   cd frontend
-   npm run build
-   cd ..
-   ```
-
-2. Start the production server:
-   ```bash
-   python src/main.py
-   ```
-
-3. Open your browser and navigate to `http://localhost:5000`
-
-## Connecting to microKORG
-
-1. Connect your microKORG to your computer via USB or MIDI interface
-2. Turn on the microKORG
-3. In Patchify, go to **Settings > MIDI Settings**
-4. Select your microKORG as the input and output device
-5. Click **Connect**
-
-## Basic Usage
-
-### Importing Patches from microKORG
-
-1. Make sure your microKORG is connected and turned on
-2. Go to **Dashboard** or **Library**
-3. Click **Import from microKORG**
-4. Wait for all patches to be imported
-
-### Exporting Patches to microKORG
-
-1. Select the patches you want to export
-2. Click **Export to microKORG**
-3. Follow the instructions on your microKORG display
-
-### Creating and Editing Patches
-
-1. Go to **Patch Editor**
-2. Select a patch to edit or click **New Patch**
-3. Edit parameters in the various tabs
-4. Click **Save** to save your changes
-
-### Organizing Patches
-
-- **Search**: Use the search bar to find patches by name
-- **Filter**: Filter patches by category or parameters
-- **Sort**: Sort patches by name, date created, or parameters
-- **Select**: Select multiple patches for export or deletion
-
-## Patch File Formats
-
-### SYSEX Format
-- Native microKORG patch format
-- Supports single patches or entire banks
-- Used for direct MIDI communication
-
-### PRG Format
-- MIDI file format containing microKORG patches
-- Supported by the microKORG librarian software
-
-### JSON Format
-- Human-readable format for patch exchange
-- Easy to share and version control
-
-## Project Structure
+## 📁 Project Structure
 
 ```
 patchify/
-├── src/
-│   ├── main.py                    # Application entry point
-│   ├── backend/
-│   │   ├── server.py              # Flask API server
-│   │   ├── patch_manager.py       # Patch library management
-│   │   ├── midi_controller.py     # MIDI communication
-│   │   └── utils.py              # Utility functions
-│   └── data/                     # Patch library storage
-├── frontend/
-│   ├── src/
-│   │   ├── main.jsx              # React app entry
-│   │   ├── App.jsx              # Main app component
-│   │   ├── pages/               # Page components
-│   │   ├── components/          # Reusable components
-│   │   ├── services/            # API services
-│   │   └── hooks/               # Custom React hooks
-│   ├── index.html               # HTML template
-│   ├── package.json             # Frontend dependencies
-│   └── vite.config.js           # Vite configuration
-├── requirements.txt             # Python dependencies
-├── package.json                 # Project configuration
-└── README.md                    # This file
+├── cli/
+│   ├── create-custom-library.cjs    # Generate patch library
+│   └── upload-with-erriez.cjs       # Upload tool
+├── patches/
+│   └── custom-library-2026-02-28.syx # Your 128 patches (32KB)
+├── upload.bat                        # Windows uploader
+├── upload.sh                         # macOS/Linux uploader
+├── package.json                      # Dependencies
+└── readme.md                         # This file
 ```
 
-## Architecture
+## 🔧 Tools Available
 
-### Backend (Python)
-- **Flask**: RESTful API server
-- **python-rtmidi**: MIDI communication
-- **Open-microKORG**: Patch format decoding/encoding
-
-### Frontend (React)
-- **React 18**: UI framework
-- **Tailwind CSS**: Styling
-- **Vite**: Build tool
-- **Lucide React**: Icons
-
-## Development
-
-### Adding New Features
-
-1. Create a new branch: `git checkout -b feature-name`
-2. Implement changes in the appropriate directory
-3. Test your changes
-4. Commit and push to remote repository
-
-### Running Tests
-
+### Generate Custom Library
 ```bash
-# Run backend tests
-pytest src/tests/
+bun run cli/create-custom-library.cjs
+```
+Creates `patches/custom-library-2026-02-28.syx` with your custom patches.
 
-# Run frontend tests
-cd frontend
-npm run test
+### Upload Library
+```bash
+bun run cli/upload-with-erriez.cjs
+```
+Uploads the SysEx library to your microKORG via Focusrite USB MIDI.
+
+## 🆘 Troubleshooting
+
+### "Focusrite not found"
+- Check USB connection to computer
+- Verify microKORG is powered on
+- Open MIDI-OX to confirm USB MIDI shows up
+- Try restarting Focusrite hardware
+
+### "Upload timeout"
+- microKORG may be processing
+- Power cycle and try again
+- Check MIDI cable is fully connected
+
+### "No response from microKORG"
+- This is normal - Focusrite is one-way (send only)
+- Power cycle microKORG to confirm patches loaded
+- Check if LED indicates activity
+
+### General debugging
+```bash
+# Shows detected MIDI devices
+bun run cli/upload-with-erriez.cjs
+
+# Look for: "Focusrite USB MIDI" in inputs/outputs
 ```
 
-## Contributing
+## 📚 How It Works
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests for new functionality
-5. Submit a pull request
+1. **Library File**: `custom-library-2026-02-28.syx` contains 128 patches × 254 bytes each
+2. **SysEx Format**: MIDI System Exclusive format for synth programming
+3. **Upload Method**: Uses Erriez MIDI SysEx Tool for reliable Windows/Mac/Linux support
+4. **No Reverb**: Focusrite USB MIDI bridge doesn't support reverb - all patches use delay instead
 
-## License
+## 🎛️ Patch Library Details
 
-MIT License - see LICENSE file for details
+### Bank A: Basses (32 patches)
+Deep subs, punchy, FM synthesis, acid basses, resonant, wobble, reese, squelch, retro, dub, industrial, cyber, analog styles.
 
-## Acknowledgments
+### Bank B: Keys (16 patches)
+E.pianos, organs, rhodes, vibraphone, harpsichord, clavichord, synth keys with various characters (soft, bright, warm, bell-like).
 
-- **Open-microKORG** - For patch format decoding/encoding
-- **KORG** - For creating the microKORG synthesizer
-- **React** - For the UI framework
-- **Tailwind CSS** - For styling
+### Bank C: Pads (16 patches)
+Ambient atmospheres, lush evolving textures, ethereal, floating, resonant, filtered, swelling, liquid, shimmering, FM pads.
 
-## Support
+### Bank D: PSY FX (64 patches)
+The experimental section! Bubble effects, spiraling modulation, granular textures, sweeping filters, alien sci-fi sounds, delay madness.
 
-If you encounter any issues or have questions:
+**Special Features**:
+- **High Resonance**: Many FX use Res 80-127 for aggressive bubble effects
+- **Crazy Modulation**: LFO rates from 15-100Hz with depths up to 120
+- **Filter Envelopes**: Envelopes modulate filter for dramatic sweeps
+- **Delay Feedback**: Feedback loops create ambient, evolving textures
+- **No Arpeggiators**: All patches have arpeggiator disabled
 
-1. Check the **Troubleshooting** section below
-2. Search the GitHub Issues
-3. Create a new issue with detailed information
+## 🎉 You're Ready!
 
-## Troubleshooting
+Your microKORG is now loaded with 128 creative, experimental patches perfect for psychedelic sound design. Enjoy the bubble effects, crazy modulation, and evolving textures!
 
-### MIDI Connection Issues
+Happy patching! 🎹✨
 
-1. **Check MIDI Devices**: Ensure your microKORG is recognized by your computer
-2. **Restart Devices**: Turn off your microKORG, disconnect USB, and reconnect
-3. **Check Drivers**: Install the latest MIDI drivers from KORG's website
-4. **Firewall Settings**: Ensure your firewall allows Patchify to access MIDI devices
+## 📝 Notes
 
-### Patch Import/Export Issues
+- All patches preserve your microKORG's built-in editing capabilities
+- You can still edit parameters on the hardware itself
+- To restore factory patches, use the factory backup: `FactoryBackUpDoResetAfter.syx`
+- Custom library can be backed up before uploading new ones
 
-1. **Connection Status**: Verify you're connected to your microKORG
-2. **Bank Memory**: Ensure your microKORG has available memory
-3. **File Formats**: Check that you're using the correct file format
-4. **Firmware**: Update your microKORG to the latest firmware version
+## ⚖️ License
 
-### Performance Issues
+MIT - Use and modify as needed for your creative projects.
 
-1. **Close Other Apps**: Close resource-intensive applications
-2. **MIDI Buffer**: Increase the MIDI buffer size in settings
-3. **Update Drivers**: Ensure your MIDI interface drivers are up to date
+## 🔗 Resources
+
+- **Erriez MIDI SysEx Tool**: https://github.com/Erriez/midi-sysex-io
+- **microKORG Manual**: https://www.korguser.net/manuals/microkorg/
+- **Bun Runtime**: https://bun.sh

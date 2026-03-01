@@ -12,10 +12,19 @@
     "cli": "bun run cli/index.js"
   },
   "dependencies": {
-    "bun": "latest"
+    "bun": "latest",
+    "easymidi": "^3.1.0",
+    "jazz-midi": "^1.7.9",
+    "midi": "^2.0.0",
+    "pdf-parse": "^2.4.5"
   },
-  "devDependencies": {},
-  "keywords": ["synth", "microkorg", "bun", "web-audio", "midi"],
+  "keywords": [
+    "synth",
+    "microkorg",
+    "bun",
+    "web-audio",
+    "midi"
+  ],
   "author": "Patchify Team",
   "license": "MIT"
 }
