@@ -192,3 +192,64 @@ MIT - Use and modify as needed for your creative projects.
 - **Erriez MIDI SysEx Tool**: https://github.com/Erriez/midi-sysex-io
 - **microKORG Manual**: https://www.korguser.net/manuals/microkorg/
 - **Bun Runtime**: https://bun.sh
+
+---
+
+## 📖 microKORG SysEx Implementation Reference
+
+**Official Specification Source**: https://ia803205.us.archive.org/21/items/micro-korg-sysex-implementation/MicroKorg%20SYSEX%20implementation.txt
+
+### Critical SysEx Protocol for Patch Writing
+
+The microKORG uses a **two-step protocol** for writing patches to internal memory:
+
+#### Step 1: Send Patch Data (Function Code 0x40)
+```
+F0 42 3g 58 40 [291-byte 7-bit encoded patch data] F7
+```
+- Loads patch data into edit buffer
+
+#### Step 2: Write to Memory (Function Code 0x11)
+```
+F0 42 3g 58 11 00 0ppppppp F7
+```
+- `ppppppp` = Program number (0-127)
+- Writes edit buffer to specified memory location
+- Device responds with 0x21 (success) or 0x22 (error)
+
+### Key Function Codes
+
+| Code | Purpose |
+|------|---------|
+| 0x0F | ALL DATA DUMP REQUEST |
+| 0x10 | CURRENT PROGRAM DATA DUMP REQUEST |
+| 0x1C | PROGRAM DATA DUMP REQUEST |
+| **0x40** | **CURRENT PROGRAM DATA DUMP** (edit buffer) |
+| **0x11** | **PROGRAM WRITE REQUEST** (to memory) |
+| 0x21 | WRITE COMPLETED |
+| 0x22 | WRITE ERROR |
+| 0x4C | PROGRAM DATA DUMP |
+| 0x50 | ALL DATA DUMP |
+
+### Important Settings
+
+**microKORG S must have**:
+1. **SysEx Enable ON** (Shift+4 → E-E: ON)
+2. **Write Protect OFF** (Shift+8 → OFF)
+
+### Data Encoding
+
+- **Raw patch**: 254 bytes
+- **7-bit MIDI format**: 291 bytes
+- Conversion groups 8-bit values into 7-bit MIDI packets
+
+### Implemented in Patchify
+
+The `cli/send-patches-individually.cjs` tool implements:
+- ✅ 7-bit data encoding (`encode7bit()` function)
+- ✅ Function code 0x40 for patch data transmission
+- ✅ Function code 0x11 for memory write requests
+- ✅ Proper timing and error handling
+- ✅ All 256 patch slots support
+
+**Verified working with**: microKORG S hardware, official Korg Sound Editor compatibility
