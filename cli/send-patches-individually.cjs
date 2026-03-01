@@ -54,7 +54,7 @@ class IndividualPatchSender {
         if (fs.existsSync(filename)) fs.unlinkSync(filename);
         process.stdout.write('T');
         resolve(false);
-      }, 3000); // Short 3-second timeout
+      }, 10000); // 10-second timeout (allow erriez time to complete)
     });
   }
 
