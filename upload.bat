@@ -21,16 +21,24 @@ if not exist "cli\upload-with-erriez.cjs" (
     exit /b 1
 )
 
-if not exist "patches\custom-library-2026-02-28.syx" (
-    echo ❌ Library file not found: patches\custom-library-2026-02-28.syx
-    echo    Run: bun run cli/create-custom-library.cjs
+REM Find latest library file
+setlocal enabledelayedexpansion
+set "latestfile="
+for /f "delims=" %%F in ('dir /b "patches\custom-library-*.syx" 2^>nul ^| sort /r') do (
+    set "latestfile=%%F"
+    goto :found_file
+)
+:found_file
+if "!latestfile!"=="" (
+    echo ❌ No library file found in patches\
+    echo    Run: bun run cli/create-custom-library-from-factory.cjs
     exit /b 1
 )
 
 REM Show file info
 echo 📦 Library File:
-echo    File: custom-library-2026-02-28.syx
-for %%A in (patches\custom-library-2026-02-28.syx) do echo    Size: %%~zA bytes
+echo    File: !latestfile!
+for %%A in ("patches\!latestfile!") do echo    Size: %%~zA bytes
 echo.
 
 REM Run the uploader

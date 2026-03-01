@@ -1,15 +1,15 @@
-#!/usr/bin/env bun
+#!/usr/bin/env node
 
 /**
- * Upload Custom Library to microKORG using Erriez MIDI SysEx Tool
- * Reliable cross-platform MIDI SysEx handling
+ * Upload Factory Backup to microKORG
+ * Tests if the factory backup file format is accepted by the hardware
  */
 
 const { spawn } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
-class MicroKORGUploader {
+class FactoryBackupUploader {
   constructor() {
     this.erriez = path.join(__dirname, '../erriez-midi-sysex-io.exe');
     this.focusritePort = null;
@@ -27,7 +27,6 @@ class MicroKORGUploader {
       });
 
       proc.on('close', () => {
-        // Parse output to find Focusrite port
         const lines = output.split('\n');
         let inOutputSection = false;
 
@@ -56,7 +55,7 @@ class MicroKORGUploader {
     });
   }
 
-  async sendLibrary(filename) {
+  async sendBackup(filename) {
     return new Promise((resolve) => {
       if (!fs.existsSync(filename)) {
         console.error(`❌ File not found: ${filename}\n`);
@@ -65,23 +64,20 @@ class MicroKORGUploader {
       }
 
       const fileSize = fs.statSync(filename).size;
-      console.log(`📦 Library file: ${path.basename(filename)}`);
+      console.log(`📦 Backup file: ${path.basename(filename)}`);
       console.log(`   Size: ${(fileSize / 1024).toFixed(1)} KB\n`);
 
       console.log('📤 Sending SysEx to microKORG...');
       console.log('   (This takes about 20-30 seconds)\n');
 
-      // Use erriez with correct arguments
       const proc = spawn(this.erriez, ['-t', filename, '-p', this.focusritePort.toString()]);
 
       let output = '';
       let errors = '';
-      let hasError = false;
 
       proc.stdout.on('data', (data) => {
         const str = data.toString();
         output += str;
-        // Show progress
         if (str.includes('100%')) {
           process.stdout.write('.');
         }
@@ -89,42 +85,37 @@ class MicroKORGUploader {
 
       proc.stderr.on('data', (data) => {
         errors += data.toString();
-        hasError = true;
       });
 
       proc.on('close', (code) => {
         console.log('\n');
 
-        // Check if "Done" appears in output (success indicator)
         const isDone = output.includes('Done (');
 
         if (code === 0 && isDone) {
           console.log('✅ SysEx transmission successful!\n');
 
-          // Extract timing info
-          const timeMatch = output.match(/Done \(([\d.]+) ms\)/);
+          const timeMatch = output.match(/Done \(([\\d.]+) ms\)/);
           if (timeMatch) {
             console.log(`   Transfer time: ${timeMatch[1]}ms`);
           }
 
           resolve(true);
         } else if (isDone) {
-          // Erriez prints progress to stderr, which is OK
           console.log('✅ SysEx transmission successful!\n');
-          const timeMatch = output.match(/Done \(([\d.]+) ms\)/);
+          const timeMatch = output.match(/Done \(([\\d.]+) ms\)/);
           if (timeMatch) {
             console.log(`   Transfer time: ${timeMatch[1]}ms`);
           }
           resolve(true);
         } else {
-          console.log('⚠️  Transmission failed\n');
+          console.log('⚠️  Transmission unclear');
           if (output.length > 0) console.log('Output:', output);
           if (errors.length > 0) console.log('Details:', errors);
           resolve(false);
         }
       });
 
-      // Timeout after 60 seconds
       setTimeout(() => {
         proc.kill();
         console.log('\n⏱️  Upload timeout\n');
@@ -136,39 +127,21 @@ class MicroKORGUploader {
 
 async function main() {
   console.log('\n' + '='.repeat(70));
-  console.log('🎹 microKORG Custom Patch Library Uploader');
+  console.log('🎹 microKORG Factory Backup Restore Test');
   console.log('='.repeat(70) + '\n');
 
-  const uploader = new MicroKORGUploader();
+  const uploader = new FactoryBackupUploader();
 
-  // Detect MIDI ports
   const found = await uploader.detectMidiPorts();
   if (!found) {
     console.log('Please connect your microKORG via USB MIDI and try again.\n');
     process.exit(1);
   }
 
-  // Check for library file (find the latest one)
-  const patchDir = 'patches';
-  const files = fs.readdirSync(patchDir).filter(f => f.startsWith('custom-library-') && f.endsWith('.syx'));
-  if (files.length === 0) {
-    console.error(`❌ No library file found in ${patchDir}`);
-    console.error('Run: bun run cli/create-custom-library-from-factory.cjs\n');
-    process.exit(1);
-  }
-  const libraryFile = path.join(patchDir, files.sort().reverse()[0]); // Latest file
-
-  // Show library info
-  console.log('📊 LIBRARY CONTENTS:');
-  console.log('   ✓ Bank A: 32 Bass patches');
-  console.log('   ✓ Bank B: 16 Key patches');
-  console.log('   ✓ Bank C: 16 Pad patches');
-  console.log('   ✓ Bank D: 64 Psychedelic FX patches\n');
-
   console.log('⚠️  IMPORTANT:');
   console.log('   • microKORG must be powered on');
   console.log('   • MIDI cable must be connected to Focusrite');
-  console.log('   • ALL existing patches will be REPLACED\n');
+  console.log('   • This will RESTORE FACTORY PATCHES\n');
 
   const readline = require('readline');
   const rl = readline.createInterface({
@@ -176,35 +149,33 @@ async function main() {
     output: process.stdout
   });
 
-  rl.question('💾 Continue with upload? (yes/no): ', async (answer) => {
+  rl.question('💾 Continue with factory restore? (yes/no): ', async (answer) => {
     rl.close();
 
     if (answer.toLowerCase() !== 'yes' && answer.toLowerCase() !== 'y') {
-      console.log('\n❌ Upload cancelled\n');
+      console.log('\n❌ Cancelled\n');
       process.exit(0);
     }
 
     console.log('\n' + '='.repeat(70));
-    console.log('🚀 UPLOADING...');
+    console.log('🚀 UPLOADING FACTORY BACKUP...');
     console.log('='.repeat(70) + '\n');
 
-    const success = await uploader.sendLibrary(libraryFile);
+    const success = await uploader.sendBackup('FactoryBackUpDoResetAfter.syx');
 
     if (success) {
       console.log('='.repeat(70));
-      console.log('✅ PATCH LIBRARY SUCCESSFULLY UPLOADED!');
+      console.log('✅ FACTORY BACKUP SENT!');
       console.log('='.repeat(70) + '\n');
-      console.log('🎉 Your microKORG now has:');
-      console.log('   • 32 creative bass patches');
-      console.log('   • 16 keyboard/pad support patches');
-      console.log('   • 16 evolving ambient pads');
-      console.log('   • 64 psychedelic FX with heavy modulation\n');
+
       console.log('⏳ microKORG is reprogramming its memory...');
       console.log('   (Wait 30 seconds before power cycling)\n');
+
       console.log('Then:');
       console.log('   1. Power cycle your microKORG');
-      console.log('   2. Navigate Banks A-D to see new patches');
-      console.log('   3. Try Bank D for the wild FX!\n');
+      console.log('   2. Check if original factory patches returned');
+      console.log('   3. This confirms the file format works!\n');
+
       process.exit(0);
     } else {
       console.log('\n❌ Upload failed');

@@ -307,8 +307,9 @@ function main() {
     patches.push(patch);
   });
 
-  // Create SysEx message
-  const sysexHeader = [0xF0, 0x42, 0x30, 0x58, 0x40];
+  // Create SysEx message with correct function code
+  // 0x50 = ALL DATA DUMP response/send (matches factory backup format)
+  const sysexHeader = [0xF0, 0x42, 0x30, 0x58, 0x50];
   const patchDataBytes = [];
   patches.forEach(p => {
     patchDataBytes.push(...Array.from(p));

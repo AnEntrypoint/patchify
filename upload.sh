@@ -19,15 +19,19 @@ if [ ! -f "$UPLOADER" ]; then
     exit 1
 fi
 
-if [ ! -f "$LIBRARY" ]; then
-    echo "❌ Library file not found: $LIBRARY"
-    echo "   Run: bun run cli/create-custom-library.cjs"
+# Find latest library file
+LIBRARY=$(ls -t ./patches/custom-library-*.syx 2>/dev/null | head -1)
+
+if [ -z "$LIBRARY" ]; then
+    echo "❌ No library file found in patches/"
+    echo "   Run: bun run cli/create-custom-library-from-factory.cjs"
     exit 1
 fi
 
 # Show file info
 echo "📦 Library File:"
-echo "   File: custom-library-2026-02-28.syx"
+FILENAME=$(basename "$LIBRARY")
+echo "   File: $FILENAME"
 SIZE=$(stat -f%z "$LIBRARY" 2>/dev/null || stat -c%s "$LIBRARY" 2>/dev/null)
 echo "   Size: $SIZE bytes"
 echo ""
