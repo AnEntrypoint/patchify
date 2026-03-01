@@ -53,27 +53,43 @@ class IndividualPatchSender {
   }
 
   encode7bit(data) {
-    // Convert 8-bit data to 7-bit MIDI format
+    // Correct 7-bit MIDI encoding per Korg spec:
+    // 7 bytes of 8-bit data → 8 bytes of 7-bit data
+    // Process in groups of 7 bytes
     const result = [];
-    let bitBuffer = 0;
-    let bitCount = 0;
 
-    for (let i = 0; i < data.length; i++) {
-      const byte = data[i];
-      for (let bit = 7; bit >= 0; bit--) {
-        bitBuffer = (bitBuffer << 1) | ((byte >> bit) & 1);
-        bitCount++;
+    let i = 0;
+    while (i < data.length) {
+      // Get up to 7 bytes
+      const groupSize = Math.min(7, data.length - i);
+      const bytes = [];
 
-        if (bitCount === 7) {
-          result.push(bitBuffer & 0x7F);
-          bitBuffer = 0;
-          bitCount = 0;
+      for (let j = 0; j < groupSize; j++) {
+        bytes.push(data[i + j]);
+      }
+
+      // Extract MSBs (bit 7) from each byte
+      let msbs = 0;
+      for (let j = 0; j < groupSize; j++) {
+        if (bytes[j] & 0x80) {
+          msbs |= (1 << j);
         }
       }
-    }
 
-    if (bitCount > 0) {
-      result.push((bitBuffer << (7 - bitCount)) & 0x7F);
+      // Output MSB byte (only lower 7 bits used)
+      result.push(msbs & 0x7F);
+
+      // Output remaining 7 bits of each byte
+      for (let j = 0; j < groupSize; j++) {
+        result.push(bytes[j] & 0x7F);
+      }
+
+      // If last group has fewer than 7 bytes, pad with a zero
+      if (groupSize < 7) {
+        result.push(0);
+      }
+
+      i += 7;
     }
 
     return Buffer.from(result);
