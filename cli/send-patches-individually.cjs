@@ -2,7 +2,8 @@
 
 /**
  * Send patches ONE-BY-ONE to microKORG S
- * Since bulk dumps don't work but individual patches do
+ * Using correct 0x40 protocol with 7-bit encoding
+ * Port detection from original working version
  */
 
 const { spawn } = require('child_process');
@@ -97,10 +98,8 @@ class IndividualPatchSender {
 
   sendPatchIndividually(patchNum, patchData) {
     return new Promise((resolve) => {
-      // SINGLE MESSAGE PROTOCOL (verified working from alapatch):
-      // F0 42 30 58 40 [7-bit encoded patch data] F7
-      // The 0x40 code sends patch data to the microKORG
-
+      // CORRECT PROTOCOL: F0 42 30 58 40 [7-bit encoded data] F7
+      // Based on verified alapatch implementation
       const encoded = this.encode7bit(patchData);
       const header = Buffer.from([0xF0, 0x42, 0x30, 0x58, 0x40]);
       const end = Buffer.from([0xF7]);
@@ -111,22 +110,34 @@ class IndividualPatchSender {
 
       const proc = spawn(this.erriez, ['-t', filename, '-p', this.focusritePort.toString()]);
 
+      let output = '';
       let done = false;
+
+      proc.stdout.on('data', (data) => {
+        output += data.toString();
+        if (data.toString().includes('Done')) {
+          done = true;
+        }
+      });
+
       proc.on('close', (code) => {
-        done = true;
         if (fs.existsSync(filename)) fs.unlinkSync(filename);
-        process.stdout.write('.');
-        resolve(true);
+
+        if (done) {
+          process.stdout.write('.');
+          resolve(true);
+        } else {
+          process.stdout.write('✗');
+          resolve(false);
+        }
       });
 
       setTimeout(() => {
-        if (!done) {
-          proc.kill();
-          if (fs.existsSync(filename)) fs.unlinkSync(filename);
-          process.stdout.write('T');
-          resolve(false);
-        }
-      }, 5000);
+        proc.kill();
+        if (fs.existsSync(filename)) fs.unlinkSync(filename);
+        process.stdout.write('T');
+        resolve(false);
+      }, 10000);
     });
   }
 
