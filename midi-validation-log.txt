@@ -1,0 +1,67 @@
+
+======================================================================
+🧪 MIDI ROUTING VALIDATION & TEST
+======================================================================
+
+
+======================================================================
+1️⃣  PORT DETECTION
+======================================================================
+
+MIDI Input Ports:
+  [0] TouchOSC Bridge
+  [1] Focusrite USB MIDI
+  [2] loopMIDI Port
+
+MIDI Output Ports:
+  [0] Microsoft GS Wavetable Synth
+  [1] TouchOSC Bridge
+  [2] Focusrite USB MIDI
+  [3] loopMIDI Port
+
+======================================================================
+2️⃣  PORT STATUS
+======================================================================
+
+loopMIDI Input (monitor listens):  ✅ Port 2
+loopMIDI Output (Korg sends):      ✅ Port 3
+Focusrite Input (receives data):   ✅ Port 1
+Focusrite Output (to hardware):    ✅ Port 2
+
+======================================================================
+3️⃣  SIGNAL PATH TEST
+======================================================================
+
+📡 Sending test SysEx to loopMIDI output port...
+✅ Test bytes sent to loopMIDI output
+   Bytes sent: 0xF0 0x42 0x30 0x58 0x4C 0x0 0x2 0xC 0x2 0x40 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0
+
+======================================================================
+4️⃣  ROUTING DIAGNOSIS
+======================================================================
+
+✅ Both loopMIDI output and Focusrite exist
+
+⚠️  CRITICAL: Windows MIDI routing must be configured
+
+Required Windows configuration:
+  loopMIDI Port Output → Focusrite USB MIDI Input
+
+Steps to configure:
+  1. Settings → Sound → Advanced
+  2. Volume mixer or App volume and device preferences
+  3. Find loopMIDI → Set output to Focusrite USB MIDI
+
+After configuration, re-run this validator to confirm routing.
+
+======================================================================
+5️⃣  VERIFICATION STEPS
+======================================================================
+
+1. Configure Windows MIDI routing (see above)
+2. Start the monitor:
+   bun cli/monitor-midi.cjs
+3. Send test bytes:
+   bun test-send-bytes.cjs
+4. Monitor should display: [SysEx received - 260 bytes]
+5. If successful, Korg editor will work
