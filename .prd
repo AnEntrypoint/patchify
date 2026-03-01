@@ -1,0 +1,122 @@
+{
+  "project": "patchify",
+  "objective": "Capture and replicate Korg editor SysEx format via loopMIDI monitoring",
+  "created": "2026-03-01",
+  "items": [
+    {
+      "id": "4",
+      "subject": "User setup: Configure loopMIDI routing",
+      "status": "pending",
+      "category": "manual",
+      "effort": "small",
+      "blocking": [
+        "5"
+      ],
+      "blockedBy": [
+        "3"
+      ]
+    },
+    {
+      "id": "5",
+      "subject": "User action: Run monitor and capture Korg SysEx",
+      "status": "pending",
+      "category": "manual",
+      "effort": "small",
+      "blocking": [
+        "6"
+      ],
+      "blockedBy": [
+        "4"
+      ]
+    },
+    {
+      "id": "6",
+      "subject": "Analyze captured SysEx format from Korg tool",
+      "status": "pending",
+      "category": "execute",
+      "effort": "medium",
+      "blocking": [
+        "7"
+      ],
+      "blockedBy": [
+        "5"
+      ]
+    },
+    {
+      "id": "7",
+      "subject": "Update send-patches-individually.cjs with Korg format",
+      "status": "pending",
+      "category": "emit",
+      "effort": "medium",
+      "blocking": [
+        "8"
+      ],
+      "blockedBy": [
+        "6"
+      ]
+    },
+    {
+      "id": "8",
+      "subject": "Verify patches upload on microKORG S hardware",
+      "status": "pending",
+      "category": "verify",
+      "effort": "large",
+      "blocking": [
+        "9"
+      ],
+      "blockedBy": [
+        "7"
+      ]
+    },
+    {
+      "id": "9",
+      "subject": "Commit and push all changes to remote",
+      "status": "pending",
+      "category": "infra",
+      "effort": "small",
+      "blocking": [],
+      "blockedBy": [
+        "8"
+      ]
+    }
+  ],
+  "completed": [
+    {
+      "id": "1",
+      "subject": "Detect loopMIDI availability and MIDI libraries",
+      "status": "completed",
+      "category": "execute",
+      "effort": "small",
+      "blocking": [
+        "3"
+      ],
+      "blockedBy": []
+    },
+    {
+      "id": "2",
+      "subject": "Validate MIDI SysEx capture feasibility",
+      "status": "completed",
+      "category": "execute",
+      "effort": "small",
+      "blocking": [
+        "3"
+      ],
+      "blockedBy": []
+    },
+    {
+      "id": "3",
+      "subject": "Create MIDI monitor CLI tool (cli/monitor-midi.cjs)",
+      "status": "completed",
+      "category": "emit",
+      "effort": "medium",
+      "blocking": [
+        "4"
+      ],
+      "blockedBy": [
+        "1",
+        "2"
+      ]
+    }
+  ],
+  "notes": "Wave 1 (parallel): items 1,2 detect MIDI capabilities. Wave 2: item 3 creates monitor. User actions 4,5 sequential. Wave 3: items 6,7,8,9 execute analysis and implementation."
+}
