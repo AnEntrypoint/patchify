@@ -23,8 +23,6 @@ if (Array.isArray(inputList)) {
   inputList.forEach((port, i) => {
     console.log(`  ${i}: ${port}`);
   });
-} else {
-  console.log('  (none found)');
 }
 
 // Find loopMIDI input port
@@ -45,25 +43,20 @@ if (loopMIDIPort === -1) {
   process.exit(1);
 }
 
-// Open MIDI input
-const input = new jazz.MIDI.Input();
-input.openPort(loopMIDIPort);
-
 console.log(`📡 Listening on: ${inputList[loopMIDIPort]}`);
 console.log('⏳ Waiting for MIDI data... (Press Ctrl+C to stop)\n');
 
 const captures = [];
 
-input.onmidimessage = (event) => {
-  const data = event.data;
-  
-  if (data[0] === 0xF0) {
-    const hex = Array.from(data).map(b => b.toString(16).padStart(2, '0').toUpperCase()).join(' ');
-    console.log(`[SysEx received - ${data.length} bytes]`);
+// Open MIDI input with callback
+const input = midi.MidiInOpen(loopMIDIPort, (deltatime, message) => {
+  if (message && message.length > 0 && message[0] === 0xF0) {
+    const hex = Array.from(message).map(b => b.toString(16).padStart(2, '0').toUpperCase()).join(' ');
+    console.log(`[SysEx received - ${message.length} bytes]`);
     console.log(`Hex: ${hex.substring(0, 80)}${hex.length > 80 ? '...' : ''}\n`);
-    captures.push({timestamp: new Date().toISOString(), bytes: Array.from(data)});
+    captures.push({timestamp: new Date().toISOString(), bytes: Array.from(message)});
   }
-};
+});
 
 process.on('SIGINT', () => {
   console.log('\n' + '='.repeat(70));
@@ -81,6 +74,5 @@ process.on('SIGINT', () => {
   
   console.log('='.repeat(70) + '\n');
   
-  input.closePort();
   process.exit(0);
 });
