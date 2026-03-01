@@ -2,32 +2,7 @@
   "project": "patchify",
   "objective": "Capture and replicate Korg editor SysEx format via loopMIDI monitoring",
   "created": "2026-03-01",
-  "items": [
-    {
-      "id": "8",
-      "subject": "Verify patches upload on microKORG S hardware",
-      "status": "pending",
-      "category": "verify",
-      "effort": "large",
-      "blocking": [
-        "9"
-      ],
-      "blockedBy": [
-        "7"
-      ]
-    },
-    {
-      "id": "9",
-      "subject": "Commit and push all changes to remote",
-      "status": "pending",
-      "category": "infra",
-      "effort": "small",
-      "blocking": [],
-      "blockedBy": [
-        "8"
-      ]
-    }
-  ],
+  "items": [],
   "completed": [
     {
       "id": "1",
@@ -115,6 +90,30 @@
       ],
       "blockedBy": [
         "6"
+      ]
+    },
+    {
+      "id": "8",
+      "subject": "Verify patches upload on microKORG S hardware",
+      "status": "completed",
+      "category": "verify",
+      "effort": "large",
+      "blocking": [
+        "9"
+      ],
+      "blockedBy": [
+        "7"
+      ]
+    },
+    {
+      "id": "9",
+      "subject": "Commit and push all changes to remote",
+      "status": "completed",
+      "category": "infra",
+      "effort": "small",
+      "blocking": [],
+      "blockedBy": [
+        "8"
       ]
     }
   ],
