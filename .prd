@@ -1,8 +1,0 @@
-{
-  "project": "patchify",
-  "objective": "Capture and replicate Korg editor SysEx format via loopMIDI monitoring",
-  "created": "2026-03-01",
-  "items": [],
-  "completed": [],
-  "notes": "Wave 1 (parallel): items 1,2 detect MIDI capabilities. Wave 2: item 3 creates monitor. User actions 4,5 sequential. Wave 3: items 6,7,8,9 execute analysis and implementation."
-}
