@@ -52,47 +52,84 @@ class IndividualPatchSender {
     });
   }
 
+  encode7bit(data) {
+    // Convert 8-bit data to 7-bit MIDI format
+    const result = [];
+    let bitBuffer = 0;
+    let bitCount = 0;
+
+    for (let i = 0; i < data.length; i++) {
+      const byte = data[i];
+      for (let bit = 7; bit >= 0; bit--) {
+        bitBuffer = (bitBuffer << 1) | ((byte >> bit) & 1);
+        bitCount++;
+
+        if (bitCount === 7) {
+          result.push(bitBuffer & 0x7F);
+          bitBuffer = 0;
+          bitCount = 0;
+        }
+      }
+    }
+
+    if (bitCount > 0) {
+      result.push((bitBuffer << (7 - bitCount)) & 0x7F);
+    }
+
+    return Buffer.from(result);
+  }
+
   sendPatchIndividually(patchNum, patchData) {
     return new Promise((resolve) => {
-      // Try function code 0x4C for individual patch send
-      // Format: F0 42 30 58 4C [patch data] F7
-      const header = Buffer.from([0xF0, 0x42, 0x30, 0x58, 0x4C]);
-      const end = Buffer.from([0xF7]);
-      const sysex = Buffer.concat([header, patchData, end]);
+      // STEP 1: Send patch data with function code 0x40 (Current Program Data Dump)
+      // Format: F0 42 3g 58 40 [7-bit encoded patch data] F7
+      const encoded = this.encode7bit(patchData);
+      const step1Header = Buffer.from([0xF0, 0x42, 0x30, 0x58, 0x40]);
+      const step1End = Buffer.from([0xF7]);
+      const step1Sysex = Buffer.concat([step1Header, encoded, step1End]);
 
-      const filename = `temp-patch-${patchNum}.syx`;
-      fs.writeFileSync(filename, sysex);
+      const filename1 = `temp-patch-${patchNum}-step1.syx`;
+      fs.writeFileSync(filename1, step1Sysex);
 
-      const proc = spawn(this.erriez, ['-t', filename, '-p', this.focusritePort.toString()]);
+      const proc1 = spawn(this.erriez, ['-t', filename1, '-p', this.focusritePort.toString()]);
 
-      let output = '';
-      let done = false;
+      proc1.on('close', () => {
+        if (fs.existsSync(filename1)) fs.unlinkSync(filename1);
 
-      proc.stdout.on('data', (data) => {
-        output += data.toString();
-        if (data.toString().includes('Done')) {
-          done = true;
-        }
-      });
+        // STEP 2: Send program write request with function code 0x11
+        // Format: F0 42 3g 58 11 00 0ppppppp F7 (where ppppppp = program number)
+        const step2Header = Buffer.from([0xF0, 0x42, 0x30, 0x58, 0x11, 0x00]);
+        const programNum = Buffer.from([patchNum & 0x7F]); // Program number 0-127
+        const step2End = Buffer.from([0xF7]);
+        const step2Sysex = Buffer.concat([step2Header, programNum, step2End]);
 
-      proc.on('close', (code) => {
-        if (fs.existsSync(filename)) fs.unlinkSync(filename);
+        const filename2 = `temp-patch-${patchNum}-step2.syx`;
+        fs.writeFileSync(filename2, step2Sysex);
 
-        if (done) {
+        const proc2 = spawn(this.erriez, ['-t', filename2, '-p', this.focusritePort.toString()]);
+
+        let step2Done = false;
+        proc2.on('close', (code) => {
+          step2Done = true;
+          if (fs.existsSync(filename2)) fs.unlinkSync(filename2);
           process.stdout.write('.');
           resolve(true);
-        } else {
-          process.stdout.write('✗');
-          resolve(false);
-        }
+        });
+
+        setTimeout(() => {
+          if (!step2Done) {
+            proc2.kill();
+            if (fs.existsSync(filename2)) fs.unlinkSync(filename2);
+            process.stdout.write('T');
+            resolve(false);
+          }
+        }, 5000);
       });
 
       setTimeout(() => {
-        proc.kill();
-        if (fs.existsSync(filename)) fs.unlinkSync(filename);
-        process.stdout.write('T');
-        resolve(false);
-      }, 10000);
+        proc1.kill();
+        if (fs.existsSync(filename1)) fs.unlinkSync(filename1);
+      }, 5000);
     });
   }
 
