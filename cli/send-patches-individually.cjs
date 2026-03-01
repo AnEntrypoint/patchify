@@ -97,54 +97,37 @@ class IndividualPatchSender {
 
   sendPatchIndividually(patchNum, patchData) {
     return new Promise((resolve) => {
-      // STEP 1: Send patch data with function code 0x40 (Current Program Data Dump)
-      // Format: F0 42 3g 58 40 [7-bit encoded patch data] F7
+      // SINGLE STEP: Send program write request with function code 0x11
+      // INCLUDING the patch data in the same message
+      // Format: F0 42 30 58 11 00 0ppppppp [7-bit encoded patch data] F7
+      // (0x40 is a RESPONSE code, not a SEND code)
+
       const encoded = this.encode7bit(patchData);
-      const step1Header = Buffer.from([0xF0, 0x42, 0x30, 0x58, 0x40]);
-      const step1End = Buffer.from([0xF7]);
-      const step1Sysex = Buffer.concat([step1Header, encoded, step1End]);
+      const header = Buffer.from([0xF0, 0x42, 0x30, 0x58, 0x11, 0x00]);
+      const programNum = Buffer.from([patchNum & 0x7F]); // Program number 0-127
+      const end = Buffer.from([0xF7]);
+      const sysex = Buffer.concat([header, programNum, encoded, end]);
 
-      const filename1 = `temp-patch-${patchNum}-step1.syx`;
-      fs.writeFileSync(filename1, step1Sysex);
+      const filename = `temp-patch-${patchNum}.syx`;
+      fs.writeFileSync(filename, sysex);
 
-      const proc1 = spawn(this.erriez, ['-t', filename1, '-p', this.focusritePort.toString()]);
+      const proc = spawn(this.erriez, ['-t', filename, '-p', this.focusritePort.toString()]);
 
-      proc1.on('close', () => {
-        if (fs.existsSync(filename1)) fs.unlinkSync(filename1);
-
-        // STEP 2: Send program write request with function code 0x11
-        // Format: F0 42 3g 58 11 00 0ppppppp F7 (where ppppppp = program number)
-        const step2Header = Buffer.from([0xF0, 0x42, 0x30, 0x58, 0x11, 0x00]);
-        const programNum = Buffer.from([patchNum & 0x7F]); // Program number 0-127
-        const step2End = Buffer.from([0xF7]);
-        const step2Sysex = Buffer.concat([step2Header, programNum, step2End]);
-
-        const filename2 = `temp-patch-${patchNum}-step2.syx`;
-        fs.writeFileSync(filename2, step2Sysex);
-
-        const proc2 = spawn(this.erriez, ['-t', filename2, '-p', this.focusritePort.toString()]);
-
-        let step2Done = false;
-        proc2.on('close', (code) => {
-          step2Done = true;
-          if (fs.existsSync(filename2)) fs.unlinkSync(filename2);
-          process.stdout.write('.');
-          resolve(true);
-        });
-
-        setTimeout(() => {
-          if (!step2Done) {
-            proc2.kill();
-            if (fs.existsSync(filename2)) fs.unlinkSync(filename2);
-            process.stdout.write('T');
-            resolve(false);
-          }
-        }, 5000);
+      let done = false;
+      proc.on('close', (code) => {
+        done = true;
+        if (fs.existsSync(filename)) fs.unlinkSync(filename);
+        process.stdout.write('.');
+        resolve(true);
       });
 
       setTimeout(() => {
-        proc1.kill();
-        if (fs.existsSync(filename1)) fs.unlinkSync(filename1);
+        if (!done) {
+          proc.kill();
+          if (fs.existsSync(filename)) fs.unlinkSync(filename);
+          process.stdout.write('T');
+          resolve(false);
+        }
       }, 5000);
     });
   }
