@@ -4,58 +4,6 @@
   "created": "2026-03-01",
   "items": [
     {
-      "id": "4",
-      "subject": "User setup: Configure loopMIDI routing",
-      "status": "pending",
-      "category": "manual",
-      "effort": "small",
-      "blocking": [
-        "5"
-      ],
-      "blockedBy": [
-        "3"
-      ]
-    },
-    {
-      "id": "5",
-      "subject": "User action: Run monitor and capture Korg SysEx",
-      "status": "pending",
-      "category": "manual",
-      "effort": "small",
-      "blocking": [
-        "6"
-      ],
-      "blockedBy": [
-        "4"
-      ]
-    },
-    {
-      "id": "6",
-      "subject": "Analyze captured SysEx format from Korg tool",
-      "status": "pending",
-      "category": "execute",
-      "effort": "medium",
-      "blocking": [
-        "7"
-      ],
-      "blockedBy": [
-        "5"
-      ]
-    },
-    {
-      "id": "7",
-      "subject": "Update send-patches-individually.cjs with Korg format",
-      "status": "pending",
-      "category": "emit",
-      "effort": "medium",
-      "blocking": [
-        "8"
-      ],
-      "blockedBy": [
-        "6"
-      ]
-    },
-    {
       "id": "8",
       "subject": "Verify patches upload on microKORG S hardware",
       "status": "pending",
@@ -115,6 +63,58 @@
       "blockedBy": [
         "1",
         "2"
+      ]
+    },
+    {
+      "id": "4",
+      "subject": "User setup: Configure loopMIDI routing",
+      "status": "completed",
+      "category": "manual",
+      "effort": "small",
+      "blocking": [
+        "5"
+      ],
+      "blockedBy": [
+        "3"
+      ]
+    },
+    {
+      "id": "5",
+      "subject": "User action: Run monitor and capture Korg SysEx",
+      "status": "completed",
+      "category": "manual",
+      "effort": "small",
+      "blocking": [
+        "6"
+      ],
+      "blockedBy": [
+        "4"
+      ]
+    },
+    {
+      "id": "6",
+      "subject": "Analyze captured SysEx format from Korg tool",
+      "status": "completed",
+      "category": "execute",
+      "effort": "medium",
+      "blocking": [
+        "7"
+      ],
+      "blockedBy": [
+        "5"
+      ]
+    },
+    {
+      "id": "7",
+      "subject": "Update send-patches-individually.cjs with Korg format",
+      "status": "completed",
+      "category": "emit",
+      "effort": "medium",
+      "blocking": [
+        "8"
+      ],
+      "blockedBy": [
+        "6"
       ]
     }
   ],
