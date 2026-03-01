@@ -2,7 +2,7 @@
 
 /**
  * Send patches ONE-BY-ONE to microKORG S
- * Since bulk dumps don't work but individual patches do
+ * Hardcoded port 2 (skip erriez detection which hangs)
  */
 
 const { spawn } = require('child_process');
@@ -12,50 +12,12 @@ const path = require('path');
 class IndividualPatchSender {
   constructor() {
     this.erriez = path.join(__dirname, '../erriez-midi-sysex-io.exe');
-    this.focusritePort = null;
-  }
-
-  detectMidiPort() {
-    return new Promise((resolve) => {
-      console.log('🔍 Detecting MIDI ports...\n');
-
-      const proc = spawn(this.erriez, ['-l']);
-      let output = '';
-
-      proc.stdout.on('data', (data) => {
-        output += data.toString();
-      });
-
-      proc.on('close', () => {
-        const lines = output.split('\n');
-        let inOutputSection = false;
-
-        for (const line of lines) {
-          if (line.includes('MIDI output ports:')) {
-            inOutputSection = true;
-            continue;
-          }
-          if (inOutputSection && line.includes('Focusrite')) {
-            const portMatch = line.match(/^\s*(\d+):/);
-            if (portMatch) {
-              this.focusritePort = parseInt(portMatch[1]);
-              console.log(`✅ Found Focusrite Output: Port ${this.focusritePort}\n`);
-              resolve(true);
-              return;
-            }
-          }
-        }
-
-        console.log('❌ Focusrite not found\n');
-        resolve(false);
-      });
-    });
+    this.focusritePort = 2; // Hardcoded - we know this from testing
   }
 
   sendPatchIndividually(patchNum, patchData) {
     return new Promise((resolve) => {
-      // Try function code 0x4C for individual patch send
-      // Format: F0 42 30 58 4C [patch data] F7
+      // F0 42 30 58 4C [patch data] F7
       const header = Buffer.from([0xF0, 0x42, 0x30, 0x58, 0x4C]);
       const end = Buffer.from([0xF7]);
       const sysex = Buffer.concat([header, patchData, end]);
@@ -92,7 +54,7 @@ class IndividualPatchSender {
         if (fs.existsSync(filename)) fs.unlinkSync(filename);
         process.stdout.write('T');
         resolve(false);
-      }, 10000);
+      }, 3000); // Short 3-second timeout
     });
   }
 
@@ -104,7 +66,7 @@ class IndividualPatchSender {
     const patchSize = 254;
     const totalPatches = 256;
 
-    console.log(`📤 Sending ${totalPatches} patches to microKORG S (one at a time)...\n`);
+    console.log(`📤 Sending ${totalPatches} patches to microKORG S (port ${this.focusritePort})...\n`);
     console.log('Progress: ');
 
     let successCount = 0;
@@ -131,12 +93,6 @@ async function main() {
   console.log('='.repeat(70) + '\n');
 
   const sender = new IndividualPatchSender();
-
-  const found = await sender.detectMidiPort();
-  if (!found) {
-    console.log('Cannot send without Focusrite output connection.\n');
-    process.exit(1);
-  }
 
   // Find latest library file
   const patchDir = 'patches';
