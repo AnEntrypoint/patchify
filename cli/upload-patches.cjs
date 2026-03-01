@@ -1,15 +1,15 @@
 #!/usr/bin/env node
 
 /**
- * Send patches ONE-BY-ONE to microKORG S
- * Since bulk dumps don't work but individual patches do
+ * Upload patches to microKORG S (simple, reliable version)
+ * No MIDI output testing - just raw SysEx uploads
  */
 
 const { spawn } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
-class IndividualPatchSender {
+class PatchUploader {
   constructor() {
     this.erriez = path.join(__dirname, '../erriez-midi-sysex-io.exe');
     this.focusritePort = null;
@@ -53,14 +53,9 @@ class IndividualPatchSender {
   }
 
   encode7bit(data) {
-    // Correct 7-bit MIDI encoding per Korg spec:
-    // 7 bytes of 8-bit data → 8 bytes of 7-bit data
-    // Process in groups of 7 bytes
     const result = [];
-
     let i = 0;
     while (i < data.length) {
-      // Get up to 7 bytes
       const groupSize = Math.min(7, data.length - i);
       const bytes = [];
 
@@ -68,7 +63,6 @@ class IndividualPatchSender {
         bytes.push(data[i + j]);
       }
 
-      // Extract MSBs (bit 7) from each byte
       let msbs = 0;
       for (let j = 0; j < groupSize; j++) {
         if (bytes[j] & 0x80) {
@@ -76,15 +70,12 @@ class IndividualPatchSender {
         }
       }
 
-      // Output MSB byte (only lower 7 bits used)
       result.push(msbs & 0x7F);
 
-      // Output remaining 7 bits of each byte
       for (let j = 0; j < groupSize; j++) {
         result.push(bytes[j] & 0x7F);
       }
 
-      // If last group has fewer than 7 bytes, pad with a zero
       if (groupSize < 7) {
         result.push(0);
       }
@@ -97,10 +88,7 @@ class IndividualPatchSender {
 
   sendPatchIndividually(patchNum, patchData) {
     return new Promise((resolve) => {
-      // SINGLE MESSAGE PROTOCOL (verified working from alapatch):
-      // F0 42 30 58 40 [7-bit encoded patch data] F7
-      // The 0x40 code sends patch data to the microKORG
-
+      // SINGLE MESSAGE: F0 42 30 58 40 [7-bit patch data] F7
       const encoded = this.encode7bit(patchData);
       const header = Buffer.from([0xF0, 0x42, 0x30, 0x58, 0x40]);
       const end = Buffer.from([0xF7]);
@@ -138,7 +126,7 @@ class IndividualPatchSender {
     const patchSize = 254;
     const totalPatches = 256;
 
-    console.log(`📤 Sending ${totalPatches} patches to microKORG S (one at a time)...\n`);
+    console.log(`📤 Uploading ${totalPatches} patches to microKORG S...\n`);
     console.log('Progress: ');
 
     let successCount = 0;
@@ -154,19 +142,19 @@ class IndividualPatchSender {
       }
     }
 
-    console.log(`\n\n✅ Sent ${successCount}/${totalPatches} patches successfully`);
+    console.log(`\n\n✅ Uploaded ${successCount}/${totalPatches} patches`);
     return successCount === totalPatches;
   }
 }
 
 async function main() {
   console.log('\n' + '='.repeat(70));
-  console.log('🎹 Send Patches One-By-One to microKORG S');
+  console.log('🎹 Upload Patches to microKORG S');
   console.log('='.repeat(70) + '\n');
 
-  const sender = new IndividualPatchSender();
+  const uploader = new PatchUploader();
 
-  const found = await sender.detectMidiPort();
+  const found = await uploader.detectMidiPort();
   if (!found) {
     console.log('Cannot send without Focusrite output connection.\n');
     process.exit(1);
@@ -187,8 +175,8 @@ async function main() {
   const stats = fs.statSync(libraryFile);
   console.log(`   Size: ${(stats.size / 1024).toFixed(1)} KB\n`);
 
-  console.log('⚠️  This will send all 256 patches (may take 5-10 minutes)');
-  console.log('   microKORG S must be powered on and SysEx enabled\n');
+  console.log('⚠️  This will upload all 256 patches (may take 10-15 minutes)');
+  console.log('   microKORG S must be powered on with SysEx enabled\n');
 
   const readline = require('readline');
   const rl = readline.createInterface({
@@ -206,11 +194,11 @@ async function main() {
 
     console.log('\n' + '='.repeat(70) + '\n');
 
-    const success = await sender.sendAllPatches(libraryFile);
+    const success = await uploader.sendAllPatches(libraryFile);
 
     console.log('\n' + '='.repeat(70));
     if (success) {
-      console.log('✅ All patches sent! Power cycle microKORG S to apply.');
+      console.log('✅ All patches uploaded! Power cycle microKORG S to apply.');
     } else {
       console.log('⚠️  Some patches may have failed. Check results above.');
     }
