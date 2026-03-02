@@ -3,72 +3,35 @@ package main
 import (
 	"fmt"
 	"os"
+	"runtime"
+	"sync/atomic"
 	"syscall"
 	"time"
 	"unsafe"
 )
 
 var (
-	winmm           = syscall.NewLazyDLL("winmm.dll")
-	midiOutGetNumDevs = winmm.NewProc("midiOutGetNumDevs")
-	midiOutGetDevCapsW = winmm.NewProc("midiOutGetDevCapsW")
-	midiOutOpen     = winmm.NewProc("midiOutOpen")
-	midiOutClose    = winmm.NewProc("midiOutClose")
-	midiOutLongMsg  = winmm.NewProc("midiOutLongMsg")
-	midiOutPrepareHeader = winmm.NewProc("midiOutPrepareHeader")
+	winmm                  = syscall.NewLazyDLL("winmm.dll")
+	midiOutOpen            = winmm.NewProc("midiOutOpen")
+	midiOutClose           = winmm.NewProc("midiOutClose")
+	midiOutLongMsg         = winmm.NewProc("midiOutLongMsg")
+	midiOutPrepareHeader   = winmm.NewProc("midiOutPrepareHeader")
 	midiOutUnprepareHeader = winmm.NewProc("midiOutUnprepareHeader")
 )
 
-type MIDIOUTCAPS struct {
-	wMid           uint16
-	wPid           uint16
-	vDriverVersion uint32
-	szPname        [32]uint16
-	wTechnology    uint16
-	wVoices        uint16
-	wNotes         uint16
-	wChannelMask   uint16
-	dwSupport      uint32
-}
-
+// MIDIHDR layout must exactly match Windows 64-bit struct
 type MIDIHDR struct {
 	lpData          uintptr
 	dwBufferLength  uint32
 	dwBytesRecorded uint32
 	dwUser          uintptr
 	dwFlags         uint32
+	_               uint32 // padding
 	lpNext          uintptr
 	reserved        uintptr
 	dwOffset        uint32
+	_               uint32 // padding
 	dwReserved      [4]uintptr
-}
-
-func listMidiOutPorts() {
-	n, _, _ := midiOutGetNumDevs.Call()
-	fmt.Printf("MIDI output ports (%d):\n", n)
-	for i := uintptr(0); i < n; i++ {
-		var caps MIDIOUTCAPS
-		midiOutGetDevCapsW.Call(i, uintptr(unsafe.Pointer(&caps)), unsafe.Sizeof(caps))
-		name := syscall.UTF16ToString(caps.szPname[:])
-		fmt.Printf("  %d: %s\n", i, name)
-	}
-}
-
-func findFocusritePort() int {
-	n, _, _ := midiOutGetNumDevs.Call()
-	for i := uintptr(0); i < n; i++ {
-		var caps MIDIOUTCAPS
-		midiOutGetDevCapsW.Call(i, uintptr(unsafe.Pointer(&caps)), unsafe.Sizeof(caps))
-		name := syscall.UTF16ToString(caps.szPname[:])
-		for _, keyword := range []string{"Focusrite", "microKORG", "KORG"} {
-			for j := 0; j+len(keyword) <= len(name); j++ {
-				if name[j:j+len(keyword)] == keyword {
-					return int(i)
-				}
-			}
-		}
-	}
-	return -1
 }
 
 func encode7bit(data []byte) []byte {
@@ -89,16 +52,16 @@ func encode7bit(data []byte) []byte {
 		for _, b := range group {
 			result = append(result, b&0x7F)
 		}
-		if len(group) < 7 {
-			result = append(result, 0)
-		}
+		// No padding - incomplete last group stays as-is
 	}
 	return result
 }
 
 func sendSysEx(handle uintptr, data []byte) error {
+	// Pin buf so GC doesn't move it while winmm holds a pointer
 	buf := make([]byte, len(data))
 	copy(buf, data)
+	runtime.KeepAlive(buf)
 
 	hdr := MIDIHDR{
 		lpData:         uintptr(unsafe.Pointer(&buf[0])),
@@ -107,19 +70,26 @@ func sendSysEx(handle uintptr, data []byte) error {
 
 	r, _, _ := midiOutPrepareHeader.Call(handle, uintptr(unsafe.Pointer(&hdr)), unsafe.Sizeof(hdr))
 	if r != 0 {
-		return fmt.Errorf("midiOutPrepareHeader failed: %d", r)
+		return fmt.Errorf("midiOutPrepareHeader: %d", r)
 	}
 
 	r, _, _ = midiOutLongMsg.Call(handle, uintptr(unsafe.Pointer(&hdr)), unsafe.Sizeof(hdr))
 	if r != 0 {
-		return fmt.Errorf("midiOutLongMsg failed: %d", r)
+		midiOutUnprepareHeader.Call(handle, uintptr(unsafe.Pointer(&hdr)), unsafe.Sizeof(hdr))
+		return fmt.Errorf("midiOutLongMsg: %d", r)
 	}
 
-	// Wait for send to complete
+	// Wait for MHDR_DONE (bit 0) with timeout
+	deadline := time.Now().Add(10 * time.Second)
 	for {
-		if hdr.dwFlags&0x00000001 != 0 { // MHDR_DONE
+		flags := atomic.LoadUint32(&hdr.dwFlags)
+		if flags&0x00000001 != 0 {
 			break
 		}
+		if time.Now().After(deadline) {
+			return fmt.Errorf("timeout waiting for send completion")
+		}
+		runtime.Gosched()
 		time.Sleep(1 * time.Millisecond)
 	}
 
@@ -128,73 +98,74 @@ func sendSysEx(handle uintptr, data []byte) error {
 }
 
 func main() {
-	fmt.Println("=== microKORG Patch Uploader (Go) ===")
-	fmt.Println()
-
-	listMidiOutPorts()
-	fmt.Println()
-
-	port := findFocusritePort()
-	if port < 0 {
-		fmt.Println("ERROR: Focusrite not found")
-		os.Exit(1)
+	// Default port 2, override with first arg
+	port := uintptr(2)
+	if len(os.Args) > 1 {
+		var p int
+		fmt.Sscanf(os.Args[1], "%d", &p)
+		port = uintptr(p)
 	}
-	fmt.Printf("Using port %d\n\n", port)
 
-	// Open MIDI out
+	fmt.Println("=== microKORG Patch Uploader ===")
+	fmt.Printf("Opening MIDI port %d directly...\n\n", port)
+
 	var handle uintptr
 	r, _, _ := midiOutOpen.Call(
 		uintptr(unsafe.Pointer(&handle)),
-		uintptr(port),
+		port,
 		0, 0, 0,
 	)
 	if r != 0 {
-		fmt.Printf("ERROR: midiOutOpen failed: %d\n", r)
+		fmt.Printf("ERROR: midiOutOpen(port %d) failed: %d\n", port, r)
+		fmt.Println("Try a different port: ./uploader.exe 1  or  ./uploader.exe 3")
 		os.Exit(1)
 	}
 	defer midiOutClose.Call(handle)
+	fmt.Printf("✅ Opened port %d\n\n", port)
 
 	// Find library file
 	libraryFile := ""
 	entries, _ := os.ReadDir("patches")
 	for _, e := range entries {
-		if !e.IsDir() && len(e.Name()) > 15 && e.Name()[:15] == "custom-library-" {
-			libraryFile = "patches/" + e.Name()
+		n := e.Name()
+		if !e.IsDir() && len(n) > 15 && n[:15] == "custom-library-" {
+			libraryFile = "patches/" + n
 		}
 	}
 	if libraryFile == "" {
-		fmt.Println("ERROR: No custom-library-*.syx found in patches/")
+		fmt.Println("ERROR: No custom-library-*.syx in patches/")
 		os.Exit(1)
 	}
 	fmt.Printf("Library: %s\n\n", libraryFile)
 
 	data, err := os.ReadFile(libraryFile)
 	if err != nil {
-		fmt.Printf("ERROR reading file: %v\n", err)
+		fmt.Printf("ERROR: %v\n", err)
 		os.Exit(1)
 	}
 
 	const patchStart = 5
 	const patchSize = 254
-	const totalPatches = 256
+	// Calculate actual patch count from file size
+	totalPatches := (len(data) - patchStart) / patchSize
+	if totalPatches > 128 {
+		totalPatches = 128
+	}
 
-	fmt.Printf("Uploading %d patches...\n\n", totalPatches)
+	fmt.Printf("Uploading %d patches (F0 42 30 58 40 [7-bit] F7)...\n\n", totalPatches)
 
 	success := 0
 	for i := 0; i < totalPatches; i++ {
 		offset := patchStart + i*patchSize
 		patchData := data[offset : offset+patchSize]
-
 		encoded := encode7bit(patchData)
 
-		// F0 42 30 58 40 [7-bit data] F7
 		sysex := make([]byte, 0, 5+len(encoded)+1)
 		sysex = append(sysex, 0xF0, 0x42, 0x30, 0x58, 0x40)
 		sysex = append(sysex, encoded...)
 		sysex = append(sysex, 0xF7)
 
-		err := sendSysEx(handle, sysex)
-		if err != nil {
+		if err := sendSysEx(handle, sysex); err != nil {
 			fmt.Printf("✗")
 		} else {
 			fmt.Printf(".")
@@ -208,8 +179,8 @@ func main() {
 		time.Sleep(300 * time.Millisecond)
 	}
 
-	fmt.Printf("\n\nDone: %d/%d patches uploaded\n", success, totalPatches)
+	fmt.Printf("\n\nResult: %d/%d patches uploaded\n", success, totalPatches)
 	if success == totalPatches {
-		fmt.Println("✅ All patches uploaded successfully!")
+		fmt.Println("✅ All patches sent!")
 	}
 }
