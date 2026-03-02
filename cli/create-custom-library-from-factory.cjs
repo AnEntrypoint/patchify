@@ -120,14 +120,21 @@ function createPatch(name, cfg = {}) {
   const nameBytes = Buffer.from(name.padEnd(12, ' ').slice(0, 12), 'ascii');
   for (let i = 0; i < 12; i++) patch[i] = nameBytes[i];
 
-  // Global: single voice, no arp, flat EQ
+  // Global: single voice, no arp, flat EQ, NO MOD/DELAY FX, normal octave
   patch[P.VOICE_MODE] = 0;          // Single voice
+  patch[P.DELAY_TIME] = 0;          // Delay OFF
+  patch[P.DELAY_DEPTH] = 0;         // Delay depth = 0
+  patch[P.DELAY_TYPE] = 0;          // Delay type off
+  patch[P.MOD_RATE] = 0;            // Mod rate = 0
+  patch[P.MOD_DEPTH] = 0;           // Mod depth = 0
+  patch[P.MOD_TYPE] = 0;            // Mod type OFF (critical: 0x40 from fill() causes phaser)
   patch[P.EQ_HI_GAIN] = 64;         // 0 dB
   patch[P.EQ_LOW_GAIN] = 64;        // 0 dB
   patch[P.ARP_TEMPO_MSB] = 0;
   patch[P.ARP_TEMPO_LSB] = 120;     // 120 BPM
+  patch[P.KBD_OCTAVE] = 0;          // Keyboard octave = 0 (critical: 0x40 from fill() causes +3)
 
-  // Optional global delay
+  // Optional global delay (override defaults if specified)
   if (cfg.delayTime  !== undefined) patch[P.DELAY_TIME]  = clamp(cfg.delayTime);
   if (cfg.delayDepth !== undefined) patch[P.DELAY_DEPTH] = clamp(cfg.delayDepth);
   if (cfg.delayType  !== undefined) patch[P.DELAY_TYPE]  = clamp(cfg.delayType, 0, 2);
