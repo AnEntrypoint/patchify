@@ -2,207 +2,395 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>microKORG S MIDI Tool</title>
+<title>microKORG S — SysEx Tool</title>
 <style>
-  body { font-family: monospace; background: #111; color: #eee; padding: 20px; max-width: 900px; }
-  button { background: #333; color: #eee; border: 1px solid #555; padding: 8px 16px; cursor: pointer; margin: 4px; }
-  button:hover { background: #444; }
-  button:disabled { opacity: 0.4; cursor: default; }
-  select { background: #222; color: #eee; border: 1px solid #555; padding: 6px; margin: 4px; }
-  #log { background: #000; border: 1px solid #333; padding: 12px; height: 400px; overflow-y: auto; font-size: 12px; white-space: pre-wrap; }
-  .ok { color: #4f4; }
-  .err { color: #f44; }
-  .info { color: #48f; }
-  .data { color: #fa4; }
-  h2 { color: #8af; border-bottom: 1px solid #333; padding-bottom: 8px; }
-  .row { margin: 8px 0; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: monospace; background: #0d0d0d; color: #ddd; padding: 24px; max-width: 860px; }
+  h1 { color: #7af; font-size: 18px; margin-bottom: 4px; }
+  .subtitle { color: #666; font-size: 12px; margin-bottom: 24px; }
+
+  section { margin-bottom: 20px; border: 1px solid #222; border-radius: 4px; padding: 16px; }
+  section h2 { font-size: 12px; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; }
+
+  .row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; }
+  .row:last-child { margin-bottom: 0; }
+
+  button {
+    background: #1e1e1e; color: #ccc; border: 1px solid #444;
+    padding: 7px 14px; cursor: pointer; font-family: monospace; font-size: 12px;
+    border-radius: 3px; transition: background 0.1s;
+  }
+  button:hover:not(:disabled) { background: #2a2a2a; border-color: #666; }
+  button:disabled { opacity: 0.35; cursor: default; }
+  button.primary { background: #1a2d1a; border-color: #3a6; color: #4d4; }
+  button.primary:hover:not(:disabled) { background: #1e341e; }
+
+  select {
+    background: #1a1a1a; color: #ccc; border: 1px solid #444;
+    padding: 6px 10px; font-family: monospace; font-size: 12px; border-radius: 3px;
+    flex: 1; min-width: 160px;
+  }
+  label { color: #777; font-size: 12px; white-space: nowrap; }
+
+  .pill {
+    font-size: 11px; padding: 3px 8px; border-radius: 10px; background: #1a1a1a;
+    border: 1px solid #333; color: #888;
+  }
+  .pill.ok { background: #0d1f0d; border-color: #2a4; color: #4a4; }
+  .pill.err { background: #1f0d0d; border-color: #a44; color: #f66; }
+  .pill.warn { background: #1f1a0d; border-color: #a84; color: #fa4; }
+
+  #progress-bar-wrap { display: none; margin-top: 8px; }
+  #progress-bar-bg { background: #1a1a1a; border: 1px solid #333; border-radius: 3px; height: 8px; }
+  #progress-bar { background: #3a6; height: 6px; width: 0%; margin: 1px; border-radius: 2px; transition: width 0.3s; }
+  #progress-label { font-size: 11px; color: #777; margin-top: 4px; }
+
+  #log {
+    background: #080808; border: 1px solid #1a1a1a; border-radius: 3px;
+    padding: 12px; height: 320px; overflow-y: auto; font-size: 11px; line-height: 1.6;
+    white-space: pre-wrap;
+  }
+  .ok   { color: #4d4; }
+  .err  { color: #f55; }
+  .info { color: #57f; }
+  .data { color: #fa5; }
+  .warn { color: #fa4; }
+
+  .instructions {
+    background: #0a0a0a; border: 1px solid #1a1a1a; border-radius: 3px;
+    padding: 12px 16px; font-size: 11px; line-height: 1.9; color: #888;
+  }
+  .instructions b { color: #aaa; }
+  .instructions code { color: #7af; background: #111; padding: 1px 4px; border-radius: 2px; }
+
+  #file-drop {
+    border: 2px dashed #333; border-radius: 4px; padding: 20px;
+    text-align: center; color: #555; font-size: 12px; cursor: pointer;
+    transition: border-color 0.15s, color 0.15s;
+  }
+  #file-drop:hover, #file-drop.drag-over { border-color: #57f; color: #7af; }
+  #file-drop.has-file { border-color: #3a6; color: #4d4; }
+  #file-input { display: none; }
 </style>
 </head>
 <body>
-<h2>microKORG S MIDI Tool</h2>
 
-<div class="row">
-  <button onclick="initMIDI()">Connect MIDI</button>
-  <span id="status">Not connected</span>
-</div>
+<h1>microKORG S — SysEx Tool</h1>
+<p class="subtitle">Send and receive SysEx patches via Web MIDI · Chrome / Edge only</p>
 
-<div class="row">
-  <label>Out:</label>
-  <select id="outPort"><option>-- select --</option></select>
-  <label>In:</label>
-  <select id="inPort"><option>-- select --</option></select>
-</div>
+<!-- STEP 1: Connect -->
+<section>
+  <h2>1 · Connect MIDI</h2>
+  <div class="row">
+    <button onclick="initMIDI()">Connect MIDI</button>
+    <span id="midi-status" class="pill">Not connected</span>
+  </div>
+  <div class="row">
+    <label>OUT:</label>
+    <select id="outPort"><option value="">— select output —</option></select>
+    <label>IN:</label>
+    <select id="inPort"><option value="">— select input —</option></select>
+  </div>
+</section>
 
-<div class="row">
-  <button onclick="requestDump('0E')" title="ALL DATA DUMP REQUEST">Request Full Dump (S)</button>
-  <button onclick="requestDump('10')" title="CURRENT PROGRAM DUMP REQUEST">Request Current Patch (S)</button>
-  <button onclick="requestDump58('0E')" title="old microKORG">Request Full Dump (old)</button>
-  <button onclick="requestDump58('10')" title="old microKORG">Request Current Patch (old)</button>
-</div>
+<!-- STEP 2: Send -->
+<section>
+  <h2>2 · Send Patches to microKORG S</h2>
+  <div id="file-drop" onclick="document.getElementById('file-input').click()"
+       ondragover="ev.preventDefault(); this.classList.add('drag-over')"
+       ondragleave="this.classList.remove('drag-over')"
+       ondrop="fileDrop(event)">
+    Drop .syx file here or click to browse
+    <input type="file" id="file-input" accept=".syx,.SYX" onchange="fileSelected(this)">
+  </div>
+  <div id="progress-bar-wrap">
+    <div id="progress-bar-bg"><div id="progress-bar"></div></div>
+    <div id="progress-label">Sending…</div>
+  </div>
+  <div class="row" style="margin-top:10px">
+    <button class="primary" id="sendBtn" disabled onclick="sendFile()">Send to microKORG S</button>
+    <span id="file-info" class="pill">no file loaded</span>
+  </div>
+  <div class="instructions" style="margin-top:10px">
+    <b>Before sending:</b><br>
+    1. Press <code>SHIFT + 8</code> → Knob 1 = <code>OFF</code> (write-protect off)<br>
+    2. Press <code>SHIFT + 4</code> → Knob 4 = <code>E-E</code> (SysEx enabled)<br>
+    3. Load your <code>.syx</code> file above, then click Send.<br>
+    4. Watch for the loading spinner on the microKORG S display (~12 seconds).
+  </div>
+</section>
 
-<div class="row">
-  <button onclick="sendLibrary()">Send Library File to microKORG S</button>
-  <input type="file" id="fileInput" accept=".syx" onchange="fileSelected(this)">
-  <span id="fileName">no file</span>
-</div>
+<!-- STEP 3: Receive -->
+<section>
+  <h2>3 · Receive Dump from microKORG S</h2>
+  <div class="row">
+    <button onclick="requestDump('0E')">Request All Data Dump</button>
+    <button onclick="requestDump('10')">Request Current Patch</button>
+    <button id="saveBtn" disabled onclick="saveDump()">Save Received Dump (.syx)</button>
+    <span id="dump-info" class="pill">nothing received</span>
+  </div>
+  <div class="instructions">
+    <b>Trigger dump manually on the device:</b><br>
+    Press <code>SHIFT + DATA DUMP</code> → select <code>ALL</code> → press <code>WRITE</code><br>
+    Or use the "Request" buttons above to ask the device automatically.
+  </div>
+</section>
 
-<div class="row">
-  <button onclick="saveDump()" id="saveBtn" disabled>Save Received Dump</button>
-  <span id="dumpInfo"></span>
-</div>
-
-<div class="row">
-  <button onclick="clearLog()">Clear Log</button>
-</div>
-
-<div id="log"></div>
+<!-- Log -->
+<section>
+  <h2>Log</h2>
+  <div id="log"></div>
+  <div class="row" style="margin-top:8px">
+    <button onclick="clearLog()">Clear</button>
+  </div>
+</section>
 
 <script>
 let midiAccess = null;
-let outPort = null;
-let inPort = null;
-let receivedChunks = [];
-let fileData = null;
+let receivedData = [];
+let loadedFile = null;
 
-function log(msg, cls='') {
+// ── Logging ──────────────────────────────────────────────────────────────────
+
+function log(msg, cls = '') {
   const el = document.getElementById('log');
   const line = document.createElement('div');
   if (cls) line.className = cls;
-  line.textContent = new Date().toLocaleTimeString() + ' ' + msg;
+  line.textContent = new Date().toLocaleTimeString('en', { hour12: false }) + '  ' + msg;
   el.appendChild(line);
   el.scrollTop = el.scrollHeight;
 }
 
 function clearLog() { document.getElementById('log').innerHTML = ''; }
 
+// ── MIDI Init ─────────────────────────────────────────────────────────────────
+
 async function initMIDI() {
+  if (!navigator.requestMIDIAccess) {
+    log('Web MIDI not supported. Use Chrome or Edge.', 'err');
+    return;
+  }
   try {
     midiAccess = await navigator.requestMIDIAccess({ sysex: true });
+    setStatus('Connected', 'ok');
     log('MIDI access granted', 'ok');
     populatePorts();
-    midiAccess.onstatechange = () => populatePorts();
-  } catch(e) {
+    midiAccess.onstatechange = populatePorts;
+  } catch (e) {
+    setStatus('Denied', 'err');
     log('MIDI access denied: ' + e.message, 'err');
-    log('Use Chrome/Edge. For localhost, MIDI is allowed without HTTPS.', 'info');
+    log('Make sure you are on localhost or HTTPS, and allow MIDI+SysEx.', 'warn');
   }
+}
+
+function setStatus(text, type) {
+  const el = document.getElementById('midi-status');
+  el.textContent = text;
+  el.className = 'pill ' + (type || '');
 }
 
 function populatePorts() {
   const outSel = document.getElementById('outPort');
-  const inSel = document.getElementById('inPort');
-  const outVal = outSel.value, inVal = inSel.value;
+  const inSel  = document.getElementById('inPort');
+  const prevOut = outSel.value;
+  const prevIn  = inSel.value;
 
-  outSel.innerHTML = '<option value="">-- select out --</option>';
-  inSel.innerHTML = '<option value="">-- select in --</option>';
+  outSel.innerHTML = '<option value="">— select output —</option>';
+  inSel.innerHTML  = '<option value="">— select input —</option>';
 
-  for (let [id, port] of midiAccess.outputs) {
+  for (const [id, port] of midiAccess.outputs) {
     const opt = document.createElement('option');
     opt.value = id;
     opt.textContent = port.name;
-    if (id === outVal) opt.selected = true;
+    if (id === prevOut) opt.selected = true;
     outSel.appendChild(opt);
-    log('OUT: ' + port.name, 'info');
   }
-  for (let [id, port] of midiAccess.inputs) {
+  for (const [id, port] of midiAccess.inputs) {
     const opt = document.createElement('option');
     opt.value = id;
     opt.textContent = port.name;
-    if (id === inVal) opt.selected = true;
+    if (id === prevIn) opt.selected = true;
     inSel.appendChild(opt);
-    log('IN:  ' + port.name, 'info');
+  }
+
+  // Auto-select Focusrite ports
+  autoSelect(outSel, ['focusrite', 'scarlett', 'midi out']);
+  autoSelect(inSel,  ['focusrite', 'scarlett', 'midi in']);
+
+  log(`Ports: ${midiAccess.outputs.size} out, ${midiAccess.inputs.size} in`, 'info');
+}
+
+function autoSelect(sel, keywords) {
+  if (sel.value) return; // already selected
+  for (const opt of sel.options) {
+    const name = opt.textContent.toLowerCase();
+    if (keywords.some(k => name.includes(k))) {
+      sel.value = opt.value;
+      log(`Auto-selected: ${opt.textContent}`, 'info');
+      break;
+    }
   }
 }
 
+// ── Port helpers ──────────────────────────────────────────────────────────────
+
 function getOut() {
   const id = document.getElementById('outPort').value;
-  if (!id) { log('Select an output port first', 'err'); return null; }
+  if (!id) { log('Select an output port first.', 'err'); return null; }
   return midiAccess.outputs.get(id);
 }
 
 function getIn() {
   const id = document.getElementById('inPort').value;
-  if (!id) { log('Select an input port first', 'err'); return null; }
+  if (!id) { log('Select an input port first.', 'err'); return null; }
   const port = midiAccess.inputs.get(id);
   port.onmidimessage = onMidiMessage;
   return port;
 }
 
+// ── MIDI receive ──────────────────────────────────────────────────────────────
+
 function onMidiMessage(event) {
   const data = event.data;
-  if (data[0] === 0xFE) return; // ignore active sensing
+  if (data[0] === 0xFE) return; // active sensing — ignore
+  if (data[0] === 0xF8) return; // MIDI clock — ignore
+
   if (data[0] === 0xF0) {
-    receivedChunks.push(...data);
-    const preview = Array.from(data.slice(0, 8)).map(b => b.toString(16).padStart(2,'0')).join(' ');
-    log(`SysEx chunk: ${data.length} bytes  [${preview}...]`, 'data');
-    // Check if complete (ends with F7)
-    if (data[data.length-1] === 0xF7) {
-      log(`SysEx complete: ${receivedChunks.length} bytes total`, 'ok');
-      document.getElementById('dumpInfo').textContent = `${receivedChunks.length} bytes received`;
+    receivedData.push(...data);
+    const preview = [...data.slice(0, 8)].map(b => b.toString(16).padStart(2, '0')).join(' ');
+    log(`SysEx: ${data.length} bytes  [${preview}…]`, 'data');
+
+    if (data[data.length - 1] === 0xF7) {
+      log(`SysEx complete: ${receivedData.length} bytes total`, 'ok');
+      document.getElementById('dump-info').textContent = `${receivedData.length} bytes`;
+      document.getElementById('dump-info').className = 'pill ok';
       document.getElementById('saveBtn').disabled = false;
     }
   } else {
-    const hex = Array.from(data).map(b => b.toString(16).padStart(2,'0')).join(' ');
+    const hex = [...data].map(b => b.toString(16).padStart(2, '0')).join(' ');
     log(`MIDI: ${hex}`, 'info');
   }
 }
 
-// microKORG S SysEx: F0 42 3n 00 01 40 ff F7
+// ── Request dump ──────────────────────────────────────────────────────────────
+
 function requestDump(fn) {
   const port = getOut();
   if (!port) return;
-  getIn(); // ensure listener attached
-  receivedChunks = [];
+  getIn(); // attach listener
+  receivedData = [];
+  document.getElementById('dump-info').textContent = 'waiting…';
+  document.getElementById('dump-info').className = 'pill warn';
+  document.getElementById('saveBtn').disabled = true;
+
+  // microKORG S model ID: 00 01 40
   const msg = [0xF0, 0x42, 0x30, 0x00, 0x01, 0x40, parseInt(fn, 16), 0xF7];
   port.send(msg);
-  log(`Sent dump request 0x${fn} (microKORG S: 00 01 40)`, 'info');
+  log(`Sent dump request fn=0x${fn}  [${msg.map(b=>b.toString(16).padStart(2,'0')).join(' ')}]`, 'info');
+  log('Waiting for response… (may need to trigger manually: SHIFT+DATA DUMP)', 'warn');
 }
 
-// Old microKORG SysEx: F0 42 3n 58 ff F7
-function requestDump58(fn) {
-  const port = getOut();
-  if (!port) return;
-  getIn();
-  receivedChunks = [];
-  const msg = [0xF0, 0x42, 0x30, 0x58, parseInt(fn, 16), 0xF7];
-  port.send(msg);
-  log(`Sent dump request 0x${fn} (old microKORG: 58)`, 'info');
+// ── File loading ──────────────────────────────────────────────────────────────
+
+function fileDrop(event) {
+  event.preventDefault();
+  document.getElementById('file-drop').classList.remove('drag-over');
+  const file = event.dataTransfer.files[0];
+  if (file) loadFile(file);
 }
 
 function fileSelected(input) {
-  const file = input.files[0];
-  if (!file) return;
-  document.getElementById('fileName').textContent = file.name;
+  if (input.files[0]) loadFile(input.files[0]);
+}
+
+function loadFile(file) {
   const reader = new FileReader();
   reader.onload = e => {
-    fileData = new Uint8Array(e.target.result);
-    log(`File loaded: ${file.name} (${fileData.length} bytes)`, 'ok');
-    log(`Header: ${Array.from(fileData.slice(0,8)).map(b=>b.toString(16).padStart(2,'0')).join(' ')}`, 'info');
+    loadedFile = new Uint8Array(e.target.result);
+    const header = [...loadedFile.slice(0, 8)].map(b => b.toString(16).padStart(2, '0')).join(' ');
+    const valid = loadedFile[0] === 0xF0 && loadedFile[loadedFile.length - 1] === 0xF7;
+
+    document.getElementById('file-drop').textContent = `${file.name}  (${loadedFile.length.toLocaleString()} bytes)`;
+    document.getElementById('file-drop').className = valid ? 'has-file' : '';
+    document.getElementById('file-info').textContent = valid
+      ? `${loadedFile.length.toLocaleString()} bytes — valid SysEx`
+      : `${loadedFile.length.toLocaleString()} bytes — WARNING: not valid SysEx`;
+    document.getElementById('file-info').className = valid ? 'pill ok' : 'pill err';
+    document.getElementById('sendBtn').disabled = !valid;
+
+    log(`Loaded: ${file.name}  (${loadedFile.length} bytes)`, valid ? 'ok' : 'err');
+    log(`Header: ${header}`, 'data');
+    if (!valid) log('File does not start with F0 or end with F7.', 'err');
   };
   reader.readAsArrayBuffer(file);
 }
 
-async function sendLibrary() {
-  if (!fileData) { log('Load a .syx file first', 'err'); return; }
+// ── Send file ─────────────────────────────────────────────────────────────────
+
+async function sendFile() {
+  if (!loadedFile) { log('No file loaded.', 'err'); return; }
   const port = getOut();
   if (!port) return;
-  log(`Sending ${fileData.length} bytes... (watch microKORG S for spinner)`, 'info');
-  // Web MIDI sends SysEx as one message - browser handles chunking
-  port.send(fileData);
-  log('Sent! Spinner should appear on microKORG S for ~12 seconds.', 'ok');
+
+  const bytes = loadedFile.length;
+  // MIDI bandwidth: 3125 bytes/sec. Add 20% buffer.
+  const estimatedSec = Math.ceil(bytes / 3125 * 1.2);
+
+  log(`Sending ${bytes.toLocaleString()} bytes (~${estimatedSec}s at MIDI bandwidth)…`, 'info');
+  log('Watch for loading spinner on microKORG S display.', 'warn');
+
+  document.getElementById('sendBtn').disabled = true;
+  showProgress(0, `Sending… (est. ${estimatedSec}s)`);
+
+  const start = Date.now();
+
+  // Animate progress bar while waiting
+  const interval = setInterval(() => {
+    const elapsed = (Date.now() - start) / 1000;
+    const pct = Math.min(95, (elapsed / estimatedSec) * 100);
+    showProgress(pct, `Sending… ${elapsed.toFixed(0)}s / ~${estimatedSec}s`);
+  }, 200);
+
+  port.send(loadedFile);
+
+  // Wait for estimated transmission time
+  await sleep(estimatedSec * 1000 + 1000);
+  clearInterval(interval);
+  showProgress(100, 'Done!');
+
+  const elapsed = ((Date.now() - start) / 1000).toFixed(1);
+  log(`Send complete in ${elapsed}s — check microKORG S for loaded patches.`, 'ok');
+
+  setTimeout(() => {
+    document.getElementById('progress-bar-wrap').style.display = 'none';
+    document.getElementById('sendBtn').disabled = false;
+  }, 2000);
 }
+
+function showProgress(pct, label) {
+  document.getElementById('progress-bar-wrap').style.display = 'block';
+  document.getElementById('progress-bar').style.width = pct + '%';
+  document.getElementById('progress-label').textContent = label;
+}
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+// ── Save dump ─────────────────────────────────────────────────────────────────
 
 function saveDump() {
-  if (!receivedChunks.length) return;
-  const blob = new Blob([new Uint8Array(receivedChunks)], { type: 'application/octet-stream' });
+  if (!receivedData.length) return;
+  const blob = new Blob([new Uint8Array(receivedData)], { type: 'application/octet-stream' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = 'dump-from-microkorg-s.syx';
+  a.download = `microkorg-s-dump-${new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19)}.syx`;
   a.click();
-  log(`Saved dump (${receivedChunks.length} bytes)`, 'ok');
+  log(`Saved ${receivedData.length} bytes.`, 'ok');
 }
 
-log('Click "Connect MIDI" to start. Use Chrome or Edge.', 'info');
-log('Make sure SysEx is enabled on microKORG S: SHIFT+4, Knob4=E-E', 'info');
+// ── Init ──────────────────────────────────────────────────────────────────────
+
+log('Open in Chrome or Edge. Click "Connect MIDI" to start.', 'info');
+log('Hardware setup: SHIFT+8 Knob1=OFF  ·  SHIFT+4 Knob4=E-E', 'info');
 </script>
 </body>
 </html>
