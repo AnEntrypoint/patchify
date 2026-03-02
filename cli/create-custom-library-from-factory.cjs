@@ -113,6 +113,8 @@ function t(timbreBase, offset) { return timbreBase + offset; }
 
 function createPatch(name, cfg = {}) {
   const patch = new Uint8Array(PATCH_SIZE);
+  // Initialize all bytes to 0x40 (center value for parameters like Tune, Bend, Transpose, Filter EG, AMP Pan, etc.)
+  patch.fill(0x40);
 
   // Name: 12 bytes, space-padded
   const nameBytes = Buffer.from(name.padEnd(12, ' ').slice(0, 12), 'ascii');
