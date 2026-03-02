@@ -139,7 +139,10 @@ function createPatch(name, cfg = {}) {
   patch[t(tb, 1)]  = 0b01000000;     // Poly assign
   patch[t(tb, 3)]  = 64;             // Tune = 0 cents
   patch[t(tb, 4)]  = 64;             // Bend range = 0
-  patch[t(tb, 5)]  = 64;             // Transpose = 0
+  patch[t(tb, 5)]  = 64;             // Transpose = 0 (legacy offset, kept for stability)
+  // CRITICAL: Actual transpose is at T1+74 (byte 112 absolute), discovered via hardware dump analysis
+  // Value encoding: 64=0, range 64±24 semitones. E.g., 52=−12, 40=−24
+  patch[t(tb, 74)] = 64 + clamp(cfg.transpose || 0, -24, 24); // Write transpose to CORRECT offset
   patch[t(tb, 6)]  = cfg.vibratoIntensity !== undefined ? clamp(cfg.vibratoIntensity) : 0;
   patch[t(tb, 7)]  = cfg.osc1Wave  !== undefined ? clamp(cfg.osc1Wave, 0, 7) : 0;  // Saw
   patch[t(tb, 8)]  = cfg.osc1Ctrl1 !== undefined ? clamp(cfg.osc1Ctrl1) : 0;
