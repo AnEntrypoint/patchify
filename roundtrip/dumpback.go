@@ -119,8 +119,14 @@ func main() {
 	mi2Start.Call(inH)
 	fmt.Println("✅ MIDI in port 1")
 
-	fmt.Println("\n>>> MANUALLY TRIGGER DUMP ON microKORG NOW <<<")
-	fmt.Println("    (Hold GLOBAL + press WRITE/DUMP, or check MIDI menu)")
+	// microKORG S model ID is 00 01 40 (3 bytes), NOT 58 like regular microKORG
+	// SysEx format: F0 42 3n 00 01 40 ff [data] F7
+	fmt.Println("\nSending dump requests with microKORG S model ID (00 01 40)...")
+	send2(outH, []byte{0xF0, 0x42, 0x30, 0x00, 0x01, 0x40, 0x0E, 0xF7}) // ALL DATA DUMP REQUEST
+	time.Sleep(300 * time.Millisecond)
+	send2(outH, []byte{0xF0, 0x42, 0x30, 0x00, 0x01, 0x40, 0x10, 0xF7}) // CURRENT PROGRAM DUMP REQUEST
+	fmt.Println("Requests sent.")
+	fmt.Println("\nAlso trigger manually: SHIFT + MIDI DATA DUMP on the device")
 	fmt.Println("Listening for 30 seconds...")
 
 	deadline := time.Now().Add(30 * time.Second)
