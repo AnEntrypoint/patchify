@@ -152,7 +152,7 @@ func main() {
 		totalPatches = 128
 	}
 
-	fmt.Printf("Uploading %d patches (F0 42 30 58 40 [7-bit] F7)...\n\n", totalPatches)
+	fmt.Printf("Uploading %d patches (0x40 load + 0x11 write, two-step)...\n\n", totalPatches)
 
 	success := 0
 	for i := 0; i < totalPatches; i++ {
@@ -160,12 +160,26 @@ func main() {
 		patchData := data[offset : offset+patchSize]
 		encoded := encode7bit(patchData)
 
+		// Step 1: Load patch data into working memory (0x40)
 		sysex := make([]byte, 0, 5+len(encoded)+1)
 		sysex = append(sysex, 0xF0, 0x42, 0x30, 0x58, 0x40)
 		sysex = append(sysex, encoded...)
 		sysex = append(sysex, 0xF7)
 
 		if err := sendSysEx(handle, sysex); err != nil {
+			fmt.Printf("✗")
+			if (i+1)%32 == 0 {
+				fmt.Printf(" [%d/%d]\n", i+1, totalPatches)
+			}
+			time.Sleep(300 * time.Millisecond)
+			continue
+		}
+
+		time.Sleep(100 * time.Millisecond)
+
+		// Step 2: Write to bank slot (0x11) - address = patch index (0-127)
+		writeReq := []byte{0xF0, 0x42, 0x30, 0x58, 0x11, 0x00, byte(i), 0xF7}
+		if err := sendSysEx(handle, writeReq); err != nil {
 			fmt.Printf("✗")
 		} else {
 			fmt.Printf(".")
@@ -176,7 +190,7 @@ func main() {
 			fmt.Printf(" [%d/%d]\n", i+1, totalPatches)
 		}
 
-		time.Sleep(300 * time.Millisecond)
+		time.Sleep(200 * time.Millisecond)
 	}
 
 	fmt.Printf("\n\nResult: %d/%d patches uploaded\n", success, totalPatches)
