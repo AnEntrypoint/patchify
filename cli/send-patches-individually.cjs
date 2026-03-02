@@ -32,15 +32,14 @@ class IndividualPatchSender {
 
       proc.stdout.on('data', (data) => {
         output += data.toString();
-        if (data.toString().includes('Done')) {
-          done = true;
-        }
       });
 
       proc.on('close', (code) => {
+        clearTimeout(timer);
         if (fs.existsSync(filename)) fs.unlinkSync(filename);
 
-        if (done) {
+        // Check full output after process closes (not per-chunk)
+        if (output.includes('Done')) {
           process.stdout.write('.');
           resolve(true);
         } else {
@@ -49,12 +48,12 @@ class IndividualPatchSender {
         }
       });
 
-      setTimeout(() => {
+      const timer = setTimeout(() => {
         proc.kill();
         if (fs.existsSync(filename)) fs.unlinkSync(filename);
         process.stdout.write('T');
         resolve(false);
-      }, 10000); // 10-second timeout (allow erriez time to complete)
+      }, 15000); // 15-second timeout
     });
   }
 
@@ -76,6 +75,9 @@ class IndividualPatchSender {
 
       const success = await this.sendPatchIndividually(i, patchData);
       if (success) successCount++;
+
+      // Backpressure: give microKORG time to process before next patch
+      await new Promise(r => setTimeout(r, 300));
 
       if ((i + 1) % 32 === 0) {
         console.log(` [${i + 1}/${totalPatches}]`);
