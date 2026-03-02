@@ -32,7 +32,7 @@ const patches = [
   { name:'Morning Acid', osc1Wave:0, osc1Level:108, filterCutoff:52, filterResonance:80,  filterEgInt:45, filterAttack:0, filterDecay:35, filterSustain:10, ampAttack:0, ampSustain:90, ampRelease:25, ...MC(40) },
   { name:'Squelch',      osc1Wave:0, osc1Level:112, filterCutoff:42, filterResonance:112, filterEgInt:58, filterAttack:0, filterDecay:22, filterSustain:0, ampAttack:0, ampSustain:85, ampRelease:20, ...MC(35) },
   { name:'Slow Acid',    osc1Wave:0, osc1Level:108, filterCutoff:45, filterResonance:88,  filterEgInt:50, filterAttack:0, filterDecay:55, filterSustain:0, ampAttack:0, ampSustain:90, ampRelease:30, ...MC(40) },
-  { name:'Bubble Acid',  osc1Wave:0, osc1Level:108, filterCutoff:48, filterResonance:95,  vp1Src:2, vp1Dst:4, vp1Int:38, lfo1Wave:2, lfo1Rate:32, ampAttack:0, ampSustain:90, ampRelease:25, ...ML(40) },
+  { name:'Bubble Acid',  osc1Wave:0, osc1Level:108, filterCutoff:48, filterResonance:95,  vp1Src:2, vp1Dst:4, vp1Int:48, lfo1Wave:2, lfo1Rate:68, ampAttack:0, ampSustain:90, ampRelease:25, ...ML(45) },
   { name:'Sine Acid',    osc1Wave:3, osc1Level:110, filterCutoff:45, filterResonance:100, filterEgInt:50, filterAttack:0, filterDecay:30, filterSustain:0, ampAttack:0, ampSustain:90, ampRelease:22, ...MC(40) },
   { name:'Square Acid',  osc1Wave:1, osc1Level:108, filterCutoff:42, filterResonance:98,  filterEgInt:52, filterAttack:0, filterDecay:28, filterSustain:0, ampAttack:0, ampSustain:88, ampRelease:22, ...MC(40) },
 
@@ -68,7 +68,7 @@ const patches = [
 
   // ── A6: Modulating Basses (41–48) — LFO movement, self-animating ──────────
   { name:'Wobble',       osc1Wave:0, osc1Level:110, filterCutoff:60, filterResonance:78, vp1Src:2, vp1Dst:4, vp1Int:42, lfo1Wave:2, lfo1Rate:28, ampAttack:2, ampSustain:100, ampRelease:40, ...ML(40) },
-  { name:'Bubble Bass',  osc1Wave:0, osc1Level:110, filterCutoff:52, filterResonance:90, vp1Src:2, vp1Dst:4, vp1Int:48, lfo1Wave:2, lfo1Rate:52, ampAttack:1, ampSustain:100, ampRelease:35, ...ML(42) },
+  { name:'Bubble Bass',  osc1Wave:0, osc1Level:110, filterCutoff:52, filterResonance:90, vp1Src:2, vp1Dst:4, vp1Int:52, lfo1Wave:2, lfo1Rate:70, ampAttack:1, ampSustain:100, ampRelease:35, ...ML(45) },
   { name:'Morphing',     osc1Wave:0, osc2Wave:2, osc2Tune:6, osc1Level:100, osc2Level:70, filterCutoff:55, filterResonance:52, vp1Src:2, vp1Dst:4, vp1Int:32, lfo1Wave:2, lfo1Rate:15, ampAttack:3, ampSustain:100, ampRelease:50, ...ML(35) },
   { name:'Tremolo Sub',  osc1Wave:3, osc1Level:112, filterCutoff:55, filterResonance:14, vp1Src:2, vp1Dst:5, vp1Int:42, lfo1Wave:1, lfo1Rate:55, ampAttack:3, ampSustain:100, ampRelease:50, ...ML(38) },
   { name:'Ripple',       osc1Wave:0, osc1Level:108, filterCutoff:62, filterResonance:48, vp1Src:2, vp1Dst:0, vp1Int:10, lfo1Wave:2, lfo1Rate:20, ampAttack:3, ampSustain:100, ampRelease:50, ...MC(35) },
@@ -285,14 +285,14 @@ const patches = [
   { name:'Dub Organ',    osc1Wave:2, osc2Wave:2, osc2Semi:12, osc1Level:95, osc2Level:68, filterCutoff:80, filterResonance:24, ampAttack:5, ampSustain:100, ampRelease:52, delayTime:65, delayDepth:58, ...MC(30) },
 
   // ── D2: Bubble / Filter FX (201–208) — self-animating filter beauty ───────
-  { name:'Bubbling',     osc1Wave:0, osc1Level:108, filterCutoff:50, filterResonance:100, vp1Src:2, vp1Dst:4, vp1Int:50, lfo1Wave:2, lfo1Rate:55, ampAttack:2, ampSustain:100, ampRelease:40, delayTime:38, delayDepth:28, ...ML(45) },
-  { name:'Gurgle',       osc1Wave:0, osc1Level:108, filterCutoff:46, filterResonance:108, vp1Src:2, vp1Dst:4, vp1Int:54, lfo1Wave:2, lfo1Rate:45, ampAttack:2, ampSustain:100, ampRelease:38, delayTime:35, delayDepth:25, ...ML(45) },
-  { name:'Percolate',    osc1Wave:0, osc1Level:105, filterCutoff:53, filterResonance:98, vp1Src:2, vp1Dst:4, vp1Int:46, lfo1Wave:2, lfo1Rate:70, ampAttack:1, ampSustain:100, ampRelease:35, ...ML(45) },
-  { name:'Fizz',         osc1Wave:1, osc1Level:100, filterCutoff:60, filterResonance:92, vp1Src:2, vp1Dst:4, vp1Int:42, lfo1Wave:2, lfo1Rate:78, ampAttack:1, ampSustain:100, ampRelease:32, delayTime:32, delayDepth:22, ...ML(42) },
-  { name:'Drip',         osc1Wave:3, osc1Level:100, filterCutoff:48, filterResonance:102, vp1Src:2, vp1Dst:4, vp1Int:50, lfo1Wave:2, lfo1Rate:28, ampAttack:2, ampSustain:100, ampRelease:45, delayTime:40, delayDepth:30, ...ML(42) },
-  { name:'Boil',         osc1Wave:0, osc2Wave:0, osc2Tune:-6, osc1Level:105, osc2Level:78, filterCutoff:48, filterResonance:105, vp1Src:2, vp1Dst:4, vp1Int:52, lfo1Wave:3, lfo1Rate:65, ampAttack:1, ampSustain:100, ampRelease:35, ...ML(45) },
-  { name:'Brook',        osc1Wave:2, osc2Wave:2, osc2Tune:8, osc1Level:95, osc2Level:78, filterCutoff:56, filterResonance:80, vp1Src:2, vp1Dst:4, vp1Int:40, lfo1Wave:2, lfo1Rate:40, ampAttack:3, ampSustain:100, ampRelease:45, delayTime:42, delayDepth:32, ...ML(40) },
-  { name:'Ocean',        osc1Wave:2, osc2Wave:2, osc2Tune:10, osc1Level:90, osc2Level:82, filterCutoff:54, filterResonance:68, vp1Src:2, vp1Dst:4, vp1Int:34, lfo1Wave:2, lfo1Rate:14, ampAttack:8, ampSustain:100, ampRelease:62, delayTime:55, delayDepth:45, ...ML(40) },
+  { name:'Bubbling',     osc1Wave:0, osc1Level:108, filterCutoff:50, filterResonance:100, vp1Src:2, vp1Dst:4, vp1Int:52, lfo1Wave:2, lfo1Rate:72, ampAttack:2, ampSustain:100, ampRelease:40, delayTime:38, delayDepth:28, ...ML(45) },
+  { name:'Gurgle',       osc1Wave:0, osc1Level:108, filterCutoff:46, filterResonance:108, vp1Src:2, vp1Dst:4, vp1Int:56, lfo1Wave:2, lfo1Rate:62, ampAttack:2, ampSustain:100, ampRelease:38, delayTime:35, delayDepth:25, ...ML(45) },
+  { name:'Percolate',    osc1Wave:0, osc1Level:105, filterCutoff:53, filterResonance:98, vp1Src:2, vp1Dst:4, vp1Int:48, lfo1Wave:2, lfo1Rate:75, ampAttack:1, ampSustain:100, ampRelease:35, ...ML(45) },
+  { name:'Fizz',         osc1Wave:1, osc1Level:100, filterCutoff:60, filterResonance:92, vp1Src:2, vp1Dst:4, vp1Int:45, lfo1Wave:2, lfo1Rate:82, ampAttack:1, ampSustain:100, ampRelease:32, delayTime:32, delayDepth:22, ...ML(45) },
+  { name:'Drip',         osc1Wave:3, osc1Level:100, filterCutoff:48, filterResonance:102, vp1Src:2, vp1Dst:4, vp1Int:52, lfo1Wave:2, lfo1Rate:50, ampAttack:2, ampSustain:100, ampRelease:45, delayTime:40, delayDepth:30, ...ML(42) },
+  { name:'Boil',         osc1Wave:0, osc2Wave:0, osc2Tune:-6, osc1Level:105, osc2Level:78, filterCutoff:48, filterResonance:105, vp1Src:2, vp1Dst:4, vp1Int:55, lfo1Wave:3, lfo1Rate:72, ampAttack:1, ampSustain:100, ampRelease:35, ...ML(45) },
+  { name:'Brook',        osc1Wave:2, osc2Wave:2, osc2Tune:8, osc1Level:95, osc2Level:78, filterCutoff:56, filterResonance:80, vp1Src:2, vp1Dst:4, vp1Int:44, lfo1Wave:2, lfo1Rate:58, ampAttack:3, ampSustain:100, ampRelease:45, delayTime:42, delayDepth:32, ...ML(42) },
+  { name:'Ocean',        osc1Wave:2, osc2Wave:2, osc2Tune:10, osc1Level:90, osc2Level:82, filterCutoff:54, filterResonance:68, vp1Src:2, vp1Dst:4, vp1Int:38, lfo1Wave:2, lfo1Rate:45, ampAttack:8, ampSustain:100, ampRelease:62, delayTime:55, delayDepth:45, ...ML(42) },
 
   // ── D3: Psy Movement (209–216) — chorusing, spiraling, wide ──────────────
   { name:'Psy Chorus',   osc1Wave:0, osc2Wave:0, osc2Tune:11, osc1Level:92, osc2Level:88, filterCutoff:78, filterResonance:32, modRate:42, modDepth:55, modType:0, ampAttack:5, ampSustain:100, ampRelease:50, delayTime:52, delayDepth:42, ...ML(35) },
