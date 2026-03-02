@@ -152,7 +152,8 @@ function createPatch(name, cfg = {}) {
   // CRITICAL: Actual transpose is at T1+74 (byte 112 absolute), discovered via hardware dump analysis
   // Value encoding: 64=0, range 64±24 semitones. E.g., 52=−12, 40=−24
   patch[t(tb, 74)] = 64 + clamp(cfg.transpose || 0, -24, 24); // Write transpose to CORRECT offset
-  patch[t(tb, 6)]  = cfg.vibratoIntensity !== undefined ? clamp(cfg.vibratoIntensity) : 0;
+  // Vibrato Intensity is SIGNED (like Tune, Bend, Transpose): 64=0 (off), range 64±63
+  patch[t(tb, 6)]  = cfg.vibratoIntensity !== undefined ? 64 + clamp(cfg.vibratoIntensity, -63, 63) : 64;
   patch[t(tb, 7)]  = cfg.osc1Wave  !== undefined ? clamp(cfg.osc1Wave, 0, 7) : 0;  // Saw
   patch[t(tb, 8)]  = cfg.osc1Ctrl1 !== undefined ? clamp(cfg.osc1Ctrl1) : 0;
   patch[t(tb, 9)]  = cfg.osc1Ctrl2 !== undefined ? clamp(cfg.osc1Ctrl2) : 0;
