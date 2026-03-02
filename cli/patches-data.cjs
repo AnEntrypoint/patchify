@@ -67,20 +67,20 @@ const patches = [
   { name:'Marimba Low',  osc1Wave:2, osc1Level:105, filterCutoff:92,  filterResonance:38, filterEgInt:32, filterDecay:20, ampAttack:0, ampDecay:30, ampSustain:0, ampRelease:25, ...MC(25) },
 
   // ── A6: Modulating Basses (41–48) — LFO movement, self-animating ──────────
-  { name:'Wobble',       osc1Wave:0, osc1Level:110, filterCutoff:60, filterResonance:78, vp1Src:2, vp1Dst:4, vp1Int:42, lfo1Wave:2, lfo1Rate:28, ampAttack:2, ampSustain:100, ampRelease:40, ...ML(40) },
+  { name:'Wobble',       osc1Wave:0, osc1Level:110, filterCutoff:60, filterResonance:78, vp1Src:2, vp1Dst:4, vp1Int:42, lfo1Wave:2, lfo1Rate:75, ampAttack:2, ampSustain:100, ampRelease:40, ...ML(40) },
   { name:'Bubble Bass',  osc1Wave:0, osc1Level:110, filterCutoff:52, filterResonance:90, vp1Src:2, vp1Dst:4, vp1Int:52, lfo1Wave:2, lfo1Rate:70, ampAttack:1, ampSustain:100, ampRelease:35, ...ML(45) },
   { name:'Morphing',     osc1Wave:0, osc2Wave:2, osc2Tune:6, osc1Level:100, osc2Level:70, filterCutoff:55, filterResonance:52, vp1Src:2, vp1Dst:4, vp1Int:32, lfo1Wave:2, lfo1Rate:15, ampAttack:3, ampSustain:100, ampRelease:50, ...ML(35) },
   { name:'Tremolo Sub',  osc1Wave:3, osc1Level:112, filterCutoff:55, filterResonance:14, vp1Src:2, vp1Dst:5, vp1Int:42, lfo1Wave:1, lfo1Rate:55, ampAttack:3, ampSustain:100, ampRelease:50, ...ML(38) },
   { name:'Ripple',       osc1Wave:0, osc1Level:108, filterCutoff:62, filterResonance:48, vp1Src:2, vp1Dst:0, vp1Int:10, lfo1Wave:2, lfo1Rate:20, ampAttack:3, ampSustain:100, ampRelease:50, vibratoIntensity:40, ...MC(35) },
   { name:'Pumping',      osc1Wave:0, osc1Level:112, filterCutoff:68, filterResonance:58, vp1Src:2, vp1Dst:5, vp1Int:52, lfo1Wave:1, lfo1Rate:62, ampAttack:2, ampSustain:100, ampRelease:30, ...ML(40) },
-  { name:'Pulsing',      osc1Wave:0, osc1Level:110, filterCutoff:50, filterResonance:82, filterEgInt:48, filterDecay:35, vp1Src:2, vp1Dst:4, vp1Int:38, lfo1Wave:2, lfo1Rate:25, ampAttack:1, ampSustain:100, ampRelease:40, ...ML(40) },
+  { name:'Pulsing',      osc1Wave:0, osc1Level:110, filterCutoff:50, filterResonance:82, filterEgInt:48, filterDecay:35, vp1Src:2, vp1Dst:4, vp1Int:38, lfo1Wave:2, lfo1Rate:75, ampAttack:1, ampSustain:100, ampRelease:40, ...ML(40) },
   { name:'Flow',         osc1Wave:2, osc2Wave:0, osc2Tune:-8, osc1Level:95, osc2Level:80, filterCutoff:58, filterResonance:38, vp1Src:2, vp1Dst:4, vp1Int:30, lfo1Wave:2, lfo1Rate:18, ampAttack:4, ampSustain:100, ampRelease:55, ...MC(40) },
 
   // ── A7: Psy Basses (49–56) — driving, hypnotic, sweet-spot psy ────────────
   { name:'Goa Acid',     osc1Wave:0, osc1Level:112, filterCutoff:50, filterResonance:100, filterEgInt:52, filterAttack:0, filterDecay:25, filterSustain:0, vp1Src:2, vp1Dst:4, vp1Int:42, lfo1Wave:2, lfo1Rate:68, ampAttack:0, ampSustain:100, ampRelease:30, ...ML(42) },
   { name:'Forest Bass',  osc1Wave:0, osc2Wave:0, osc2Tune:-9, osc1Level:105, osc2Level:65, filterCutoff:48, filterResonance:82, filterEgInt:48, filterDecay:30, vp1Src:2, vp1Dst:4, vp1Int:40, lfo1Wave:2, lfo1Rate:55, ampAttack:0, ampSustain:100, ampRelease:32, ...ML(40) },
   { name:'Full On',      osc1Wave:0, osc1Level:112, filterCutoff:52, filterResonance:92,  filterEgInt:55, filterAttack:0, filterDecay:26, filterSustain:0, ampAttack:0, ampSustain:100, ampRelease:28, ...MC(45) },
-  { name:'Morning Psy',  osc1Wave:0, osc1Level:108, filterCutoff:62, filterResonance:85,  filterEgInt:48, filterDecay:28, vp1Src:2, vp1Dst:4, vp1Int:38, lfo1Wave:2, lfo1Rate:45, ampAttack:0, ampSustain:100, ampRelease:30, ...ML(40) },
+  { name:'Morning Psy',  osc1Wave:0, osc1Level:108, filterCutoff:62, filterResonance:85,  filterEgInt:48, filterDecay:28, vp1Src:2, vp1Dst:4, vp1Int:38, lfo1Wave:2, lfo1Rate:70, ampAttack:0, ampSustain:100, ampRelease:30, ...ML(40) },
   { name:'Alien Groove', osc1Wave:0, osc2Wave:0, osc2Mod:1, osc2Semi:4, osc1Level:100, osc2Level:72, filterCutoff:52, filterResonance:85, filterEgInt:48, filterDecay:30, vp1Src:2, vp1Dst:4, vp1Int:42, lfo1Wave:2, lfo1Rate:60, ampAttack:0, ampSustain:100, ampRelease:32, ...ML(40) },
   { name:'Spiral Bass',  osc1Wave:0, osc2Wave:0, osc2Tune:-6, osc1Level:105, osc2Level:80, filterCutoff:50, filterResonance:95, vp1Src:2, vp1Dst:4, vp1Int:50, lfo1Wave:2, lfo1Rate:65, ampAttack:0, ampSustain:100, ampRelease:35, ...ML(45) },
   { name:'Psyche Sub',   osc1Wave:3, osc2Wave:0, osc2Tune:-10, osc1Level:112, osc2Level:48, filterCutoff:50, filterResonance:20, ampAttack:2, ampSustain:100, ampRelease:55, ...MC(40) },
@@ -164,7 +164,7 @@ const patches = [
 
   // ── B7: Expressive / Funky Leads (113–120) ───────────────────────────────
   { name:'Soul Lead',    osc1Wave:3, osc2Wave:2, osc2Semi:12, osc1Level:102, osc2Level:32, filterCutoff:94, filterResonance:20, portamento:14, ampAttack:7, ampSustain:100, ampRelease:50, delayTime:38, delayDepth:25, ...MC(22) },
-  { name:'Wah Lead',     osc1Wave:0, osc1Level:108, filterCutoff:55, filterResonance:80, vp1Src:2, vp1Dst:4, vp1Int:42, lfo1Wave:2, lfo1Rate:22, ampAttack:3, ampSustain:100, ampRelease:38, ...MC(40) },
+  { name:'Wah Lead',     osc1Wave:0, osc1Level:108, filterCutoff:55, filterResonance:80, vp1Src:2, vp1Dst:4, vp1Int:42, lfo1Wave:2, lfo1Rate:75, ampAttack:3, ampSustain:100, ampRelease:38, ...MC(40) },
   { name:'Funky Lead',   osc1Wave:0, osc1Level:108, filterCutoff:42, filterResonance:75, filterEgInt:54, filterAttack:0, filterDecay:38, filterSustain:10, ampAttack:2, ampSustain:92, ampRelease:38, ...MC(40) },
   { name:'Cocked Wah',   osc1Wave:0, osc1Level:108, filterType:2, filterCutoff:72, filterResonance:88, portamento:10, ampAttack:3, ampSustain:100, ampRelease:38, ...MC(42) },
   { name:'Phaser Lead',  osc1Wave:0, osc2Wave:0, osc2Tune:-5, osc1Level:95, osc2Level:88, filterCutoff:82, filterResonance:42, vp1Src:2, vp1Dst:6, vp1Int:40, lfo1Wave:2, lfo1Rate:18, ampAttack:4, ampSustain:100, ampRelease:42, ...MC(35) },
@@ -239,7 +239,7 @@ const patches = [
   { name:'Golden Hour',  osc1Wave:0, osc2Wave:2, osc2Tune:10, osc1Level:88, osc2Level:84, filterCutoff:72, filterResonance:20, vp1Src:2, vp1Dst:4, vp1Int:18, lfo1Wave:2, lfo1Rate:10, ampAttack:24, ampSustain:100, ampRelease:87, delayTime:55, delayDepth:44, ...MC(35) },
 
   // ── C6: Resonant Pads (169–176) ──────────────────────────────────────────
-  { name:'Resonant Pad', osc1Wave:0, osc2Wave:2, osc2Tune:9, osc1Level:88, osc2Level:80, filterCutoff:56, filterResonance:72, vp1Src:2, vp1Dst:4, vp1Int:30, lfo1Wave:2, lfo1Rate:14, ampAttack:24, ampSustain:100, ampRelease:84, delayTime:52, delayDepth:42, ...MC(40) },
+  { name:'Resonant Pad', osc1Wave:0, osc2Wave:2, osc2Tune:9, osc1Level:88, osc2Level:80, filterCutoff:56, filterResonance:72, vp1Src:2, vp1Dst:4, vp1Int:30, lfo1Wave:2, lfo1Rate:70, ampAttack:24, ampSustain:100, ampRelease:84, delayTime:52, delayDepth:42, ...MC(40) },
   { name:'Rezo',         osc1Wave:0, osc1Level:90, filterCutoff:58, filterResonance:88, filterEgInt:40, filterAttack:14, filterDecay:68, ampAttack:22, ampSustain:100, ampRelease:82, delayTime:55, delayDepth:42, ...MC(40) },
   { name:'Filtered Pad', osc1Wave:2, osc2Wave:2, osc2Tune:8, osc1Level:88, osc2Level:80, filterCutoff:50, filterResonance:78, filterEgInt:45, filterAttack:18, filterDecay:72, ampAttack:24, ampSustain:100, ampRelease:84, delayTime:55, delayDepth:44, ...MC(40) },
   { name:'Sweep Pad',    osc1Wave:0, osc2Wave:2, osc2Tune:10, osc1Level:88, osc2Level:80, filterCutoff:44, filterResonance:70, filterEgInt:55, filterAttack:20, filterDecay:82, ampAttack:22, ampSustain:100, ampRelease:87, delayTime:60, delayDepth:48, ...MC(42) },
@@ -297,7 +297,7 @@ const patches = [
   // ── D3: Psy Movement (209–216) — chorusing, spiraling, wide ──────────────
   { name:'Psy Chorus',   osc1Wave:0, osc2Wave:0, osc2Tune:11, osc1Level:92, osc2Level:88, filterCutoff:78, filterResonance:32, modRate:42, modDepth:55, modType:0, ampAttack:5, ampSustain:100, ampRelease:50, delayTime:52, delayDepth:42, ...ML(35) },
   { name:'Spiral FX',    osc1Wave:0, osc2Wave:0, osc2Tune:9, osc1Level:90, osc2Level:82, filterCutoff:62, filterResonance:78, vp1Src:2, vp1Dst:4, vp1Int:42, lfo1Wave:2, lfo1Rate:52, ampAttack:4, ampSustain:100, ampRelease:48, delayTime:50, delayDepth:42, ...ML(42) },
-  { name:'Trippy',       osc1Wave:0, osc2Wave:2, osc2Tune:10, osc1Level:90, osc2Level:82, filterCutoff:60, filterResonance:82, vp1Src:2, vp1Dst:0, vp1Int:15, lfo1Wave:2, lfo1Rate:30, ampAttack:5, ampSustain:100, ampRelease:50, delayTime:55, delayDepth:45, vibratoIntensity:42, ...ML(40) },
+  { name:'Trippy',       osc1Wave:0, osc2Wave:2, osc2Tune:10, osc1Level:90, osc2Level:82, filterCutoff:60, filterResonance:82, vp1Src:2, vp1Dst:0, vp1Int:15, lfo1Wave:2, lfo1Rate:75, ampAttack:5, ampSustain:100, ampRelease:50, delayTime:55, delayDepth:45, vibratoIntensity:42, ...ML(40) },
   { name:'Shpongle',     osc1Wave:2, osc2Wave:2, osc2Tune:13, osc1Level:88, osc2Level:86, filterCutoff:65, filterResonance:60, vp1Src:2, vp1Dst:4, vp1Int:30, lfo1Wave:2, lfo1Rate:20, ampAttack:8, ampSustain:100, ampRelease:58, delayTime:60, delayDepth:52, ...ML(38) },
   { name:'Wavering',     osc1Wave:0, osc2Wave:0, osc2Tune:8, osc1Level:90, osc2Level:82, filterCutoff:70, filterResonance:32, vp1Src:2, vp1Dst:0, vp1Int:20, lfo1Wave:2, lfo1Rate:18, ampAttack:6, ampSustain:100, ampRelease:52, delayTime:50, delayDepth:40, vibratoIntensity:44, ...ML(30) },
   { name:'Drift',        osc1Wave:2, osc2Wave:2, osc2Tune:11, osc1Level:88, osc2Level:84, filterCutoff:65, filterResonance:24, vp1Src:2, vp1Dst:0, vp1Int:10, lfo1Wave:2, lfo1Rate:8,  ampAttack:12, ampSustain:100, ampRelease:65, delayTime:62, delayDepth:52, vibratoIntensity:38, ...ML(30) },
@@ -335,12 +335,12 @@ const patches = [
   { name:'Wave Rise',    osc1Wave:2, osc2Wave:2, osc2Tune:10, osc1Level:95, osc2Level:84, filterCutoff:28, filterResonance:72, vp1Src:2, vp1Dst:4, vp1Int:48, lfo1Wave:2, lfo1Rate:55, filterEgInt:52, filterAttack:72, filterDecay:100, ampAttack:5, ampSustain:100, ampRelease:47, ...ML(45) },
 
   // ── D7: Alien / Psy FX (241–248) ─────────────────────────────────────────
-  { name:'Alien Vox',    osc1Wave:4, osc1Level:108, filterCutoff:68, filterResonance:88, filterEgInt:44, filterDecay:50, vp1Src:2, vp1Dst:4, vp1Int:34, lfo1Wave:2, lfo1Rate:32, portamento:18, ampAttack:5, ampSustain:92, ampRelease:54, delayTime:45, delayDepth:38, ...ML(45) },
-  { name:'Ring Planet',  osc1Wave:0, osc2Wave:0, osc2Mod:1, osc2Semi:6, osc1Level:100, osc2Level:82, filterCutoff:66, filterResonance:72, filterEgInt:42, filterDecay:44, vp1Src:2, vp1Dst:4, vp1Int:38, lfo1Wave:2, lfo1Rate:28, ampAttack:3, ampSustain:92, ampRelease:52, delayTime:42, delayDepth:35, ...ML(40) },
+  { name:'Alien Vox',    osc1Wave:4, osc1Level:108, filterCutoff:68, filterResonance:88, filterEgInt:44, filterDecay:50, vp1Src:2, vp1Dst:4, vp1Int:34, lfo1Wave:2, lfo1Rate:75, portamento:18, ampAttack:5, ampSustain:92, ampRelease:54, delayTime:45, delayDepth:38, ...ML(45) },
+  { name:'Ring Planet',  osc1Wave:0, osc2Wave:0, osc2Mod:1, osc2Semi:6, osc1Level:100, osc2Level:82, filterCutoff:66, filterResonance:72, filterEgInt:42, filterDecay:44, vp1Src:2, vp1Dst:4, vp1Int:38, lfo1Wave:2, lfo1Rate:75, ampAttack:3, ampSustain:92, ampRelease:52, delayTime:42, delayDepth:35, ...ML(40) },
   { name:'S&H Alien',    osc1Wave:1, osc1Level:102, filterCutoff:75, filterResonance:68, vp1Src:2, vp1Dst:0, vp1Int:38, lfo1Wave:3, lfo1Rate:72, ampAttack:1, ampDecay:35, ampSustain:68, ampRelease:28, delayTime:38, delayDepth:30, vibratoIntensity:45, ...ML(40) },
   { name:'Glitch',       osc1Wave:1, osc2Wave:1, osc2Tune:8, osc1Level:100, osc2Level:82, filterCutoff:80, filterResonance:62, vp1Src:2, vp1Dst:0, vp1Int:42, lfo1Wave:3, lfo1Rate:88, ampAttack:0, ampDecay:30, ampSustain:58, ampRelease:22, vibratoIntensity:43, ...ML(40) },
   { name:'Metal Hit',    osc1Wave:0, osc2Wave:0, osc2Mod:1, osc2Semi:4, osc1Level:102, osc2Level:90, filterCutoff:92, filterResonance:65, filterEgInt:40, filterDecay:22, ampAttack:0, ampDecay:30, ampSustain:0, ampRelease:22, ...MC(35) },
-  { name:'Alien Talk',   osc1Wave:4, osc2Wave:1, osc2Semi:12, osc1Level:100, osc2Level:58, filterType:2, filterCutoff:65, filterResonance:92, vp1Src:2, vp1Dst:4, vp1Int:42, lfo1Wave:2, lfo1Rate:25, ampAttack:4, ampSustain:94, ampRelease:50, delayTime:40, delayDepth:32, ...ML(45) },
+  { name:'Alien Talk',   osc1Wave:4, osc2Wave:1, osc2Semi:12, osc1Level:100, osc2Level:58, filterType:2, filterCutoff:65, filterResonance:92, vp1Src:2, vp1Dst:4, vp1Int:42, lfo1Wave:2, lfo1Rate:80, ampAttack:4, ampSustain:94, ampRelease:50, delayTime:40, delayDepth:32, ...ML(45) },
   { name:'Laser FX',     osc1Wave:0, osc1Level:108, filterCutoff:100, filterResonance:52, vp1Src:1, vp1Dst:0, vp1Int:52, ampAttack:0, ampDecay:28, ampSustain:0, ampRelease:18, ...ML(35) },
   { name:'Siren',        osc1Wave:0, osc1Level:108, filterCutoff:92, filterResonance:35, vp1Src:2, vp1Dst:0, vp1Int:54, lfo1Wave:2, lfo1Rate:22, ampAttack:5, ampSustain:100, ampRelease:35, vibratoIntensity:40, ...ML(35) },
 
