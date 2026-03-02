@@ -66,7 +66,7 @@
 const fs = require('fs');
 
 const PATCH_SIZE = 254;
-const TOTAL_PATCHES = 128;
+const TOTAL_PATCHES = 256; // microKORG S has 256 patches (2 banks of 128)
 
 // Absolute byte offsets within a 254-byte patch
 const T1 = 38;   // Timbre 1 start
@@ -295,43 +295,72 @@ const patches = [
 
 // ── Build SysEx ───────────────────────────────────────────────────────────────
 
+/**
+ * 7-bit encode: every 7 raw bytes → 8 encoded bytes
+ * MSB byte collects bit7 of each data byte, then 7 bytes with high bits cleared.
+ * Encoding: MSB bit(7-j) = raw[j] >> 7, for j=0..6
+ */
+function encode7bit(raw) {
+  const out = [];
+  for (let i = 0; i < raw.length; i += 7) {
+    let msb = 0;
+    const chunk = raw.slice(i, Math.min(i + 7, raw.length));
+    // MSB byte: bits 6..0 hold the high-bit of data bytes 0..6 (bit7 of MSB stays 0 = valid MIDI byte)
+    for (let j = 0; j < chunk.length; j++) {
+      msb |= ((chunk[j] >> 7) & 1) << (6 - j);
+    }
+    out.push(msb);
+    for (let j = 0; j < chunk.length; j++) {
+      out.push(chunk[j] & 0x7F);
+    }
+  }
+  return Buffer.from(out);
+}
+
 async function main() {
-  const factoryPath = 'FactoryBackUpDoResetAfter.syx';
-  if (!fs.existsSync(factoryPath)) {
-    console.error('❌ FactoryBackUpDoResetAfter.syx not found in current directory');
+  // Load factory bank B from saved dump (patches 128-255, intact from device)
+  const bankBPath = 'patches/factory-bank-b.bin';
+  if (!fs.existsSync(bankBPath)) {
+    console.error('❌ patches/factory-bank-b.bin not found.');
+    console.error('   Run the dump capture first via midi-tool/index.html to get factory bank B.');
+    process.exit(1);
+  }
+  const factoryBankB = fs.readFileSync(bankBPath);
+  if (factoryBankB.length !== 128 * PATCH_SIZE) {
+    console.error(`❌ factory-bank-b.bin wrong size: ${factoryBankB.length} (expected ${128 * PATCH_SIZE})`);
     process.exit(1);
   }
 
-  const factory = fs.readFileSync(factoryPath);
-  // Factory format: F0 42 30 58 50 [128×254 patch bytes] [system data] F7
-  const header  = factory.slice(0, 5);          // F0 42 30 58 50
-  const footer  = factory.slice(-1);             // F7
-  const body    = factory.slice(5, -1);
-  const sysData = body.slice(TOTAL_PATCHES * PATCH_SIZE); // global/system area (~3902 bytes)
-
-  if (patches.length !== TOTAL_PATCHES) {
-    console.error(`❌ Need exactly ${TOTAL_PATCHES} patches, got ${patches.length}`);
-    process.exit(1);
-  }
-
-  const patchBuffer = Buffer.alloc(TOTAL_PATCHES * PATCH_SIZE);
+  // Build bank A (our 128 custom patches)
+  const bankA = Buffer.alloc(128 * PATCH_SIZE);
   patches.forEach((cfg, i) => {
-    const bytes = createPatch(cfg.name, cfg);
-    patchBuffer.set(bytes, i * PATCH_SIZE);
+    bankA.set(createPatch(cfg.name, cfg), i * PATCH_SIZE);
   });
 
-  const sysex = Buffer.concat([header, patchBuffer, sysData, footer]);
+  // Combine: 256 patches = bank A + factory bank B
+  const allRaw = Buffer.concat([bankA, factoryBankB]); // 65,024 bytes
+  console.log(`Raw patch data: ${allRaw.length} bytes (${allRaw.length / PATCH_SIZE} patches)`);
+
+  // 7-bit encode
+  const encoded = encode7bit(allRaw);
+  console.log(`7-bit encoded: ${encoded.length} bytes`);
+
+  // microKORG S ALL DATA DUMP format: F0 42 30 00 01 40 50 [encoded] F7
+  const header = Buffer.from([0xF0, 0x42, 0x30, 0x00, 0x01, 0x40, 0x50]);
+  const footer = Buffer.from([0xF7]);
+  const sysex  = Buffer.concat([header, encoded, footer]);
 
   const outFile = `patches/custom-library-${new Date().toISOString().split('T')[0]}.syx`;
   fs.writeFileSync(outFile, sysex);
 
-  console.log(`✅ Created ${TOTAL_PATCHES} patches → ${outFile}  (${sysex.length} bytes)`);
-  console.log(`   Format: F0 42 30 58 50 — compatible with factory backup format`);
-  console.log(`\nBanks:`);
-  console.log(`   A: Basses    (1–32)`);
-  console.log(`   B: Keys      (33–48)`);
-  console.log(`   C: Pads      (49–64)`);
-  console.log(`   D: PSY FX    (65–128) — Bubbles, Resonant, Spiral, Mod, Sweep, Granular, Delay, Alien`);
+  console.log(`\n✅ ${outFile}  (${sysex.length} bytes)`);
+  console.log(`   Header: F0 42 30 00 01 40 50 — microKORG S native format`);
+  console.log(`\nBank A (1–128) — Custom PSY/Electronic patches:`);
+  console.log(`   1–32:  Basses`);
+  console.log(`   33–48: Keys`);
+  console.log(`   49–64: Pads`);
+  console.log(`   65–128: PSY FX (Bubbles, Resonant, Spiral, Mod, Sweep, Granular, Delay, Alien)`);
+  console.log(`\nBank B (129–256) — Factory presets (preserved from device dump)`);
   console.log(`\nSend with midi-tool/index.html in Chrome/Edge.`);
 }
 
