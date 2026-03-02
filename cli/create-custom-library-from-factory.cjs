@@ -120,19 +120,20 @@ function createPatch(name, cfg = {}) {
   const nameBytes = Buffer.from(name.padEnd(12, ' ').slice(0, 12), 'ascii');
   for (let i = 0; i < 12; i++) patch[i] = nameBytes[i];
 
-  // Global: single voice, no arp, flat EQ, NO MOD/DELAY FX, normal octave
-  patch[P.VOICE_MODE] = 0;          // Single voice
-  patch[P.DELAY_TIME] = 0;          // Delay OFF
+  // Global: single voice, no arp, flat EQ, no FX, normal octave
+  // CRITICAL: Use FACTORY DEFAULTS, not 0
+  patch[P.VOICE_MODE] = 0x40;       // Single voice (factory: 0x40)
+  patch[P.DELAY_TIME] = 0;          // Delay time = 0
   patch[P.DELAY_DEPTH] = 0;         // Delay depth = 0
-  patch[P.DELAY_TYPE] = 0;          // Delay type off
+  patch[P.DELAY_TYPE] = 0;          // Delay type OFF
   patch[P.MOD_RATE] = 0;            // Mod rate = 0
   patch[P.MOD_DEPTH] = 0;           // Mod depth = 0
-  patch[P.MOD_TYPE] = 0;            // Mod type OFF (critical: 0x40 from fill() causes phaser)
+  patch[P.MOD_TYPE] = 1;            // Mod type OFF (factory: 0x01, NOT 0!)
   patch[P.EQ_HI_GAIN] = 64;         // 0 dB
   patch[P.EQ_LOW_GAIN] = 64;        // 0 dB
   patch[P.ARP_TEMPO_MSB] = 0;
   patch[P.ARP_TEMPO_LSB] = 120;     // 120 BPM
-  patch[P.KBD_OCTAVE] = 0;          // Keyboard octave = 0 (critical: 0x40 from fill() causes +3)
+  patch[P.KBD_OCTAVE] = 0x7F;       // Keyboard octave = 0 (factory: 0x7F=127, NOT 0!)
 
   // Optional global delay (override defaults if specified)
   if (cfg.delayTime  !== undefined) patch[P.DELAY_TIME]  = clamp(cfg.delayTime);
@@ -152,8 +153,8 @@ function createPatch(name, cfg = {}) {
   // CRITICAL: Actual transpose is at T1+74 (byte 112 absolute), discovered via hardware dump analysis
   // Value encoding: 64=0, range 64±24 semitones. E.g., 52=−12, 40=−24
   patch[t(tb, 74)] = 64 + clamp(cfg.transpose || 0, -24, 24); // Write transpose to CORRECT offset
-  // Vibrato Intensity is SIGNED (like Tune, Bend, Transpose): 64=0 (off), range 64±63
-  patch[t(tb, 6)]  = cfg.vibratoIntensity !== undefined ? 64 + clamp(cfg.vibratoIntensity, -63, 63) : 64;
+  // Vibrato Intensity: factory default 0x41 (65), not 0x40!
+  patch[t(tb, 6)]  = cfg.vibratoIntensity !== undefined ? 64 + clamp(cfg.vibratoIntensity, -63, 63) : 0x41;
   patch[t(tb, 7)]  = cfg.osc1Wave  !== undefined ? clamp(cfg.osc1Wave, 0, 7) : 0;  // Saw
   patch[t(tb, 8)]  = cfg.osc1Ctrl1 !== undefined ? clamp(cfg.osc1Ctrl1) : 0;
   patch[t(tb, 9)]  = cfg.osc1Ctrl2 !== undefined ? clamp(cfg.osc1Ctrl2) : 0;
@@ -164,7 +165,8 @@ function createPatch(name, cfg = {}) {
   patch[t(tb, 16)] = cfg.osc1Level  !== undefined ? clamp(cfg.osc1Level)  : 100; // OSC1 Level
   patch[t(tb, 17)] = cfg.osc2Level  !== undefined ? clamp(cfg.osc2Level)  : 0;
   patch[t(tb, 18)] = cfg.noiseLevel !== undefined ? clamp(cfg.noiseLevel) : 0;
-  patch[t(tb, 19)] = cfg.filterType !== undefined ? clamp(cfg.filterType, 0, 3) : 0;
+  // Filter Type: factory default 0x01 (12LPF), not 0x00 (which enables HPF!)
+  patch[t(tb, 19)] = cfg.filterType !== undefined ? clamp(cfg.filterType, 0, 3) : 1;
   patch[t(tb, 20)] = cfg.filterCutoff    !== undefined ? clamp(cfg.filterCutoff)    : 100;
   patch[t(tb, 21)] = cfg.filterResonance !== undefined ? clamp(cfg.filterResonance) : 0;
   patch[t(tb, 22)] = 64 + clamp(cfg.filterEgInt || 0, -63, 63); // EG intensity (signed)
