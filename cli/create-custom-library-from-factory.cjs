@@ -140,6 +140,7 @@ function createPatch(name, cfg = {}) {
   patch[t(tb, 3)]  = 64;             // Tune = 0 cents
   patch[t(tb, 4)]  = 64;             // Bend range = 0
   patch[t(tb, 5)]  = 64;             // Transpose = 0
+  patch[t(tb, 6)]  = cfg.vibratoIntensity !== undefined ? clamp(cfg.vibratoIntensity) : 0;
   patch[t(tb, 7)]  = cfg.osc1Wave  !== undefined ? clamp(cfg.osc1Wave, 0, 7) : 0;  // Saw
   patch[t(tb, 8)]  = cfg.osc1Ctrl1 !== undefined ? clamp(cfg.osc1Ctrl1) : 0;
   patch[t(tb, 9)]  = cfg.osc1Ctrl2 !== undefined ? clamp(cfg.osc1Ctrl2) : 0;
