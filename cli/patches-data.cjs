@@ -1,12 +1,12 @@
 // microKORG S patch library — 256 patches
 // Bank A: Basses  Bank B: Keys  Bank C: Pads  Bank D: FX
-// VP Src 7=Mod wheel routed on every patch
+// VP Src 6=Mod wheel routed on every patch (Src 7=PitchBend)
 
-const MC  = (n) => ({ vp2Src:7, vp2Dst:4, vp2Int:n });  // Mod→Cutoff
-const MP  = (n) => ({ vp2Src:7, vp2Dst:0, vp2Int:n });  // Mod→Pitch
-const MO2 = (n) => ({ vp2Src:7, vp2Dst:1, vp2Int:n });  // Mod→OSC2Pitch
-const MC1 = (n) => ({ vp2Src:7, vp2Dst:2, vp2Int:n });  // Mod→Ctrl1
-const ML  = (n) => ({ vp2Src:7, vp2Dst:7, vp2Int:n });  // Mod→LFO2Freq
+const MC  = (n) => ({ vp2Src:6, vp2Dst:4, vp2Int:n });  // Mod→Cutoff
+const MP  = (n) => ({ vp2Src:6, vp2Dst:0, vp2Int:n });  // Mod→Pitch
+const MO2 = (n) => ({ vp2Src:6, vp2Dst:1, vp2Int:n });  // Mod→OSC2Pitch
+const MC1 = (n) => ({ vp2Src:6, vp2Dst:2, vp2Int:n });  // Mod→Ctrl1
+const ML  = (n) => ({ vp2Src:6, vp2Dst:7, vp2Int:n });  // Mod→LFO2Freq
 
 const patches = [
 

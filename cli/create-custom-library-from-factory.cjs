@@ -205,7 +205,7 @@ function clamp(v, lo = 0, hi = 127) {
 //   Bank B (65–128): Keys    (bright, warm, bells, mono leads, whistle, sync, wah, wide)
 //   Bank C (129–192):Pads    (warm, evolving, strings, ambient, twilight, resonant, chorus, dub)
 //   Bank D (193–256):FX      (dub FX, bubble, psy movement, arp tones, stabs, sweeps, alien, drones)
-// Every patch has mod wheel (VP Src=7) routed to a useful destination.
+// Every patch has mod wheel (VP Src=6) routed to a useful destination. Src=7 is PitchBend.
 // Arps: off by default everywhere.
 const patches = require('./patches-data.cjs');
 
