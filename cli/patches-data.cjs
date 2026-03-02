@@ -32,7 +32,7 @@ const patches = [
   { name:'Morning Acid', osc1Wave:0, osc1Level:108, filterCutoff:52, filterResonance:80,  filterEgInt:45, filterAttack:0, filterDecay:35, filterSustain:10, ampAttack:0, ampSustain:90, ampRelease:25, ...MC(40) },
   { name:'Squelch',      osc1Wave:0, osc1Level:112, filterCutoff:42, filterResonance:112, filterEgInt:58, filterAttack:0, filterDecay:22, filterSustain:0, ampAttack:0, ampSustain:85, ampRelease:20, ...MC(35) },
   { name:'Slow Acid',    osc1Wave:0, osc1Level:108, filterCutoff:45, filterResonance:88,  filterEgInt:50, filterAttack:0, filterDecay:55, filterSustain:0, ampAttack:0, ampSustain:90, ampRelease:30, ...MC(40) },
-  { name:'Bubble Acid',  osc1Wave:0, osc1Level:108, filterCutoff:48, filterResonance:95,  vp1Src:2, vp1Dst:4, vp1Int:48, lfo1Wave:2, lfo1Rate:68, ampAttack:0, ampSustain:90, ampRelease:25, ...ML(45) },
+  { name:'Bubble Acid',  osc1Wave:0, osc1Level:108, filterCutoff:48, filterResonance:95,  filterEgInt:50, filterDecay:30, filterSustain:0, vp1Src:2, vp1Dst:4, vp1Int:48, lfo1Wave:2, lfo1Rate:68, ampAttack:0, ampSustain:90, ampRelease:25, ...ML(45) },
   { name:'Sine Acid',    osc1Wave:3, osc1Level:110, filterCutoff:45, filterResonance:100, filterEgInt:50, filterAttack:0, filterDecay:30, filterSustain:0, ampAttack:0, ampSustain:90, ampRelease:22, ...MC(40) },
   { name:'Square Acid',  osc1Wave:1, osc1Level:108, filterCutoff:42, filterResonance:98,  filterEgInt:52, filterAttack:0, filterDecay:28, filterSustain:0, ampAttack:0, ampSustain:88, ampRelease:22, ...MC(40) },
 
@@ -113,12 +113,12 @@ const patches = [
   { name:'Glass Key',    osc1Wave:2, osc1Level:105, filterCutoff:110, filterResonance:50, filterEgInt:38, filterDecay:28, ampAttack:0, ampDecay:45, ampSustain:0, ampRelease:30, delayTime:35, delayDepth:20, ...MC(20) },
 
   // ── B2: Warm Keys / Vintage (73–80) ───────────────────────────────────────
-  { name:'Rhodes Warm',  osc1Wave:5, osc1Level:105, filterCutoff:88,  filterResonance:20, ampAttack:5, ampDecay:52, ampSustain:72, ampRelease:50, delayTime:40, delayDepth:22, ...MC(25) },
-  { name:'E.Piano',      osc1Wave:5, osc1Level:105, filterCutoff:92,  filterResonance:22, ampAttack:4, ampDecay:48, ampSustain:75, ampRelease:46, delayTime:38, delayDepth:20, ...MC(25) },
+  { name:'Rhodes Warm',  osc1Wave:5, osc1Level:105, filterCutoff:88,  filterResonance:20, ampAttack:5, ampDecay:52, ampSustain:72, ampRelease:50, delayTime:40, delayDepth:22, vp1Src:4, vp1Dst:5, vp1Int:35, ...MC(25) },
+  { name:'E.Piano',      osc1Wave:5, osc1Level:105, filterCutoff:92,  filterResonance:22, ampAttack:4, ampDecay:48, ampSustain:75, ampRelease:46, delayTime:38, delayDepth:20, vp1Src:4, vp1Dst:5, vp1Int:35, ...MC(25) },
   { name:'Vintage Keys', osc1Wave:0, osc2Wave:0, osc2Tune:7, osc1Level:95, osc2Level:82, filterCutoff:85, filterResonance:28, vp1Src:2, vp1Dst:4, vp1Int:15, lfo1Wave:2, lfo1Rate:28, ampAttack:7, ampDecay:46, ampSustain:80, ampRelease:54, delayTime:38, delayDepth:22, ...MC(25) },
   { name:'Mellow Keys',  osc1Wave:2, osc1Level:105, filterCutoff:80,  filterResonance:18, ampAttack:10, ampDecay:50, ampSustain:82, ampRelease:60, delayTime:40, delayDepth:25, ...MC(22) },
-  { name:'Jazzy Keys',   osc1Wave:5, osc1Level:102, filterCutoff:85,  filterResonance:25, filterEgInt:22, filterDecay:35, ampAttack:6, ampDecay:46, ampSustain:78, ampRelease:52, ...MC(30) },
-  { name:'Rhodes Dark',  osc1Wave:5, osc1Level:100, filterCutoff:76,  filterResonance:22, ampAttack:6,  ampDecay:56, ampSustain:70, ampRelease:54, delayTime:42, delayDepth:28, ...MC(25) },
+  { name:'Jazzy Keys',   osc1Wave:5, osc1Level:102, filterCutoff:85,  filterResonance:25, filterEgInt:22, filterDecay:35, ampAttack:6, ampDecay:46, ampSustain:78, ampRelease:52, vp1Src:4, vp1Dst:5, vp1Int:30, ...MC(30) },
+  { name:'Rhodes Dark',  osc1Wave:5, osc1Level:100, filterCutoff:76,  filterResonance:22, ampAttack:6,  ampDecay:56, ampSustain:70, ampRelease:54, delayTime:42, delayDepth:28, vp1Src:4, vp1Dst:5, vp1Int:35, ...MC(25) },
   { name:'Warm Bell',    osc1Wave:3, osc1Level:105, filterCutoff:92,  filterResonance:24, ampAttack:3,  ampDecay:62, ampSustain:0,  ampRelease:58, delayTime:42, delayDepth:28, ...MC(20) },
   { name:'Soft Keys',    osc1Wave:2, osc2Wave:2, osc2Tune:8, osc1Level:95, osc2Level:78, filterCutoff:78, filterResonance:20, ampAttack:14, ampDecay:50, ampSustain:82, ampRelease:60, ...MC(25) },
 
@@ -140,7 +140,7 @@ const patches = [
   { name:'Rock Organ',   osc1Wave:1, osc2Wave:0, osc2Semi:12, osc1Level:108, osc2Level:80, filterCutoff:115, filterResonance:0, ampAttack:0, ampSustain:127, ampRelease:8,  modRate:65, modDepth:35, modType:1, ...MC(25) },
   { name:'Pipe Organ',   osc1Wave:2, osc2Wave:2, osc2Semi:7,  osc1Level:100, osc2Level:75, filterCutoff:100, filterResonance:0, ampAttack:8, ampSustain:127, ampRelease:18, ...MC(22) },
   { name:'Rotary Slow',  osc1Wave:1, osc2Wave:1, osc2Semi:12, osc1Level:100, osc2Level:65, filterCutoff:105, filterResonance:5, vp1Src:2, vp1Dst:6, vp1Int:35, lfo1Wave:2, lfo1Rate:18, ampAttack:0, ampSustain:127, ampRelease:10, ...MC(22) },
-  { name:'Flute Organ',  osc1Wave:3, osc2Wave:2, osc2Semi:12, osc1Level:100, osc2Level:58, filterCutoff:95,  filterResonance:8, ampAttack:3, ampSustain:127, ampRelease:12, delayTime:25, delayDepth:15, ...MC(20) },
+  { name:'Flute Organ',  osc1Wave:2, osc2Wave:2, osc2Semi:12, osc1Level:100, osc2Level:58, filterCutoff:95,  filterResonance:8, ampAttack:3, ampSustain:127, ampRelease:12, delayTime:25, delayDepth:15, ...MC(20) },
 
   // ── B5: Whistle / Sine Leads (97–104) — G-funk signature ──────────────────
   { name:'Whistle',      osc1Wave:3, osc1Level:110, filterCutoff:100, filterResonance:10, vp1Src:3, vp1Dst:0, vp1Int:22, lfo2Wave:2, lfo2Rate:45, portamento:12, ampAttack:8, ampSustain:100, ampRelease:45, delayTime:40, delayDepth:25, ...MP(28) },
@@ -173,14 +173,14 @@ const patches = [
   { name:'Moog Lead',    osc1Wave:0, osc2Wave:0, osc2Semi:12, osc1Level:102, osc2Level:40, filterCutoff:85, filterResonance:60, filterEgInt:35, filterDecay:40, portamento:18, ampAttack:5, ampSustain:100, ampRelease:46, ...MC(20) },
 
   // ── B8: Funky Keys (121–128) — Rhodes variants, clavs, soul keys ─────────
-  { name:'Rhodes Brite', osc1Wave:5, osc1Level:108, filterCutoff:100, filterResonance:30, filterEgInt:28, filterDecay:30, ampAttack:3, ampDecay:46, ampSustain:68, ampRelease:46, delayTime:38, delayDepth:20, ...MC(28) },
-  { name:'Rhodes Soft',  osc1Wave:5, osc1Level:105, filterCutoff:82,  filterResonance:20, ampAttack:5,  ampDecay:54, ampSustain:72, ampRelease:52, delayTime:42, delayDepth:25, ...MC(25) },
-  { name:'Funk Keys',    osc1Wave:5, osc1Level:105, filterCutoff:75,  filterResonance:38, filterEgInt:32, filterDecay:28, ampAttack:4, ampDecay:50, ampSustain:70, ampRelease:44, ...MC(30) },
+  { name:'Rhodes Brite', osc1Wave:5, osc1Level:108, filterCutoff:100, filterResonance:30, filterEgInt:28, filterDecay:30, ampAttack:3, ampDecay:46, ampSustain:68, ampRelease:46, delayTime:38, delayDepth:20, vp1Src:4, vp1Dst:5, vp1Int:38, ...MC(28) },
+  { name:'Rhodes Soft',  osc1Wave:5, osc1Level:105, filterCutoff:82,  filterResonance:20, ampAttack:5,  ampDecay:54, ampSustain:72, ampRelease:52, delayTime:42, delayDepth:25, vp1Src:4, vp1Dst:5, vp1Int:32, ...MC(25) },
+  { name:'Funk Keys',    osc1Wave:5, osc1Level:105, filterCutoff:75,  filterResonance:38, filterEgInt:32, filterDecay:28, ampAttack:4, ampDecay:50, ampSustain:70, ampRelease:44, vp1Src:4, vp1Dst:5, vp1Int:35, ...MC(30) },
   { name:'Clavi Hard',   osc1Wave:1, osc1Level:110, filterCutoff:108, filterResonance:55, filterEgInt:45, filterDecay:16, ampAttack:0, ampDecay:28, ampSustain:42, ampRelease:20, ...MC(30) },
   { name:'Clavi Soft',   osc1Wave:1, osc1Level:105, filterCutoff:92,  filterResonance:40, filterEgInt:38, filterDecay:22, ampAttack:0, ampDecay:35, ampSustain:55, ampRelease:25, ...MC(28) },
-  { name:'Soul Keys',    osc1Wave:5, osc2Wave:2, osc2Tune:8, osc1Level:100, osc2Level:58, filterCutoff:85, filterResonance:24, ampAttack:6, ampDecay:52, ampSustain:74, ampRelease:52, delayTime:40, delayDepth:22, ...MC(25) },
-  { name:'Night Keys',   osc1Wave:5, osc1Level:102, filterCutoff:72,  filterResonance:22, ampAttack:7,  ampDecay:56, ampSustain:70, ampRelease:56, delayTime:45, delayDepth:28, ...MC(25) },
-  { name:'Blue Note',    osc1Wave:5, osc2Wave:2, osc2Tune:7, osc1Level:98, osc2Level:48, filterCutoff:80, filterResonance:28, filterEgInt:20, filterDecay:35, ampAttack:5, ampDecay:52, ampSustain:72, ampRelease:54, delayTime:42, delayDepth:25, ...MC(25) },
+  { name:'Soul Keys',    osc1Wave:5, osc2Wave:2, osc2Tune:8, osc1Level:100, osc2Level:58, filterCutoff:85, filterResonance:24, ampAttack:6, ampDecay:52, ampSustain:74, ampRelease:52, delayTime:40, delayDepth:22, vp1Src:4, vp1Dst:5, vp1Int:32, ...MC(25) },
+  { name:'Night Keys',   osc1Wave:5, osc1Level:102, filterCutoff:72,  filterResonance:22, ampAttack:7,  ampDecay:56, ampSustain:70, ampRelease:56, delayTime:45, delayDepth:28, vp1Src:4, vp1Dst:5, vp1Int:30, ...MC(25) },
+  { name:'Blue Note',    osc1Wave:5, osc2Wave:2, osc2Tune:7, osc1Level:98, osc2Level:48, filterCutoff:80, filterResonance:28, filterEgInt:20, filterDecay:35, ampAttack:5, ampDecay:52, ampSustain:72, ampRelease:54, delayTime:42, delayDepth:25, vp1Src:4, vp1Dst:5, vp1Int:30, ...MC(25) },
 
   // ══════════════════════════════════════════════════════════════════════════
   // BANK C: PADS (129–192)
@@ -213,7 +213,7 @@ const patches = [
   { name:'Ensemble',     osc1Wave:0, osc2Wave:0, osc2Tune:10, osc1Level:88, osc2Level:88, filterCutoff:78, filterResonance:20, ampAttack:22, ampSustain:100, ampRelease:80, delayTime:48, delayDepth:38, ...MC(30) },
   { name:'Cello',        osc1Wave:0, osc2Wave:2, osc2Tune:7, osc1Level:90, osc2Level:72, filterCutoff:70, filterResonance:22, ampAttack:25, ampSustain:100, ampRelease:80, delayTime:42, delayDepth:32, ...MC(30) },
   { name:'Viola',        osc1Wave:0, osc2Wave:0, osc2Tune:8, osc1Level:88, osc2Level:84, filterCutoff:78, filterResonance:20, ampAttack:20, ampSustain:100, ampRelease:78, delayTime:44, delayDepth:34, ...MC(30) },
-  { name:'Violin Hi',    osc1Wave:0, osc2Wave:0, osc2Tune:9, osc1Level:88, osc2Level:86, filterCutoff:85, filterResonance:20, ampAttack:17, ampSustain:100, ampRelease:72, delayTime:42, delayDepth:32, ...MC(30) },
+  { name:'Violin Hi',    osc1Wave:0, osc2Wave:0, osc2Tune:9, osc1Level:88, osc2Level:86, filterCutoff:85, filterResonance:20, ampAttack:25, ampSustain:100, ampRelease:72, delayTime:42, delayDepth:32, ...MC(30) },
   { name:'Pizzicato',    osc1Wave:0, osc1Level:108, filterCutoff:92, filterResonance:30, filterEgInt:35, filterDecay:20, ampAttack:0, ampDecay:40, ampSustain:0, ampRelease:30, ...MC(25) },
   { name:'Slow Bow',     osc1Wave:0, osc2Wave:0, osc2Tune:8, osc1Level:88, osc2Level:84, filterCutoff:72, filterResonance:20, ampAttack:38, ampSustain:100, ampRelease:90, delayTime:50, delayDepth:38, ...MC(30) },
   { name:'Full Bow',     osc1Wave:0, osc2Wave:2, osc2Tune:10, osc1Level:88, osc2Level:86, filterCutoff:76, filterResonance:20, ampAttack:24, ampSustain:100, ampRelease:82, delayTime:50, delayDepth:40, ...MC(30) },
@@ -259,9 +259,9 @@ const patches = [
   { name:'Diffuse',      osc1Wave:2, osc2Wave:0, osc2Tune:9,  osc1Level:85, osc2Level:84, filterCutoff:70, filterResonance:16, modRate:36, modDepth:48, modType:0, ampAttack:32, ampSustain:100, ampRelease:92, delayTime:62, delayDepth:52, ...MC(35) },
 
   // ── C8: Dub Pads (185–192) ──────────────────────────────────────────────
-  { name:'Dub Pad',      osc1Wave:0, osc2Wave:2, osc2Tune:8,  osc1Level:90, osc2Level:78, filterCutoff:70, filterResonance:22, ampAttack:17, ampSustain:100, ampRelease:78, delayTime:62, delayDepth:55, ...MC(35) },
+  { name:'Dub Pad',      osc1Wave:0, osc2Wave:2, osc2Tune:8,  osc1Level:90, osc2Level:78, filterCutoff:70, filterResonance:22, ampAttack:25, ampSustain:100, ampRelease:78, delayTime:62, delayDepth:55, ...MC(35) },
   { name:'Echo Pad',     osc1Wave:2, osc2Wave:2, osc2Tune:9,  osc1Level:88, osc2Level:80, filterCutoff:68, filterResonance:20, ampAttack:20, ampSustain:100, ampRelease:80, delayTime:68, delayDepth:58, ...MC(35) },
-  { name:'Dub Chord',    osc1Wave:0, osc2Wave:1, osc2Semi:7, osc2Tune:5, osc1Level:88, osc2Level:74, filterCutoff:72, filterResonance:24, ampAttack:14, ampDecay:52, ampSustain:74, ampRelease:67, delayTime:62, delayDepth:55, ...MC(35) },
+  { name:'Dub Chord',    osc1Wave:0, osc2Wave:1, osc2Semi:7, osc2Tune:5, osc1Level:88, osc2Level:74, filterCutoff:72, filterResonance:24, ampAttack:25, ampDecay:52, ampSustain:74, ampRelease:67, delayTime:62, delayDepth:55, ...MC(35) },
   { name:'Space Echo',   osc1Wave:2, osc2Wave:2, osc2Tune:11, osc1Level:85, osc2Level:82, filterCutoff:65, filterResonance:20, ampAttack:22, ampSustain:100, ampRelease:87, delayTime:72, delayDepth:62, ...MC(35) },
   { name:'Reverb Pad',   osc1Wave:3, osc2Wave:2, osc2Tune:9,  osc1Level:85, osc2Level:80, filterCutoff:68, filterResonance:18, ampAttack:24, ampSustain:100, ampRelease:92, delayTime:70, delayDepth:60, ...MC(35) },
   { name:'Dub Wide',     osc1Wave:0, osc2Wave:0, osc2Tune:10, osc1Level:88, osc2Level:86, filterCutoff:70, filterResonance:22, modRate:38, modDepth:46, modType:0, ampAttack:20, ampSustain:100, ampRelease:84, delayTime:65, delayDepth:58, ...MC(35) },
