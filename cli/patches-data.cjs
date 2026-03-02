@@ -125,7 +125,7 @@ const patches = [
   // ── B3: Bell / Mallet (81–88) ──────────────────────────────────────────────
   { name:'Bell Pure',    osc1Wave:3, osc2Wave:0, osc2Mod:1, osc2Semi:10, osc1Level:100, osc2Level:55, filterCutoff:100, filterResonance:25, ampAttack:0, ampDecay:65, ampSustain:0, ampRelease:55, delayTime:45, delayDepth:30, ...MC(20) },
   { name:'Marimba',      osc1Wave:2, osc1Level:108, filterCutoff:98,  filterResonance:28, ampAttack:0, ampDecay:28, ampSustain:0, ampRelease:22, ...MC(15) },
-  { name:'Vibraphone',   osc1Wave:3, osc1Level:108, filterCutoff:100, filterResonance:18, vp1Src:2, vp1Dst:0, vp1Int:12, lfo1Wave:2, lfo1Rate:48, ampAttack:2, ampDecay:42, ampSustain:0, ampRelease:38, delayTime:38, delayDepth:22, ...MP(18) },
+  { name:'Vibraphone',   osc1Wave:3, osc1Level:108, filterCutoff:100, filterResonance:18, vp1Src:2, vp1Dst:0, vp1Int:12, lfo1Wave:2, lfo1Rate:48, ampAttack:2, ampDecay:42, ampSustain:0, ampRelease:38, delayTime:38, delayDepth:22, ...MC(18) },
   { name:'Xylophone',    osc1Wave:0, osc1Level:110, filterCutoff:105, filterResonance:32, filterEgInt:30, filterDecay:18, ampAttack:0, ampDecay:22, ampSustain:0, ampRelease:18, ...MC(20) },
   { name:'Soft Bell',    osc1Wave:3, osc1Level:100, filterCutoff:95,  filterResonance:18, ampAttack:2, ampDecay:70, ampSustain:0, ampRelease:65, delayTime:48, delayDepth:32, ...MC(20) },
   { name:'Steel Pan',    osc1Wave:3, osc2Wave:0, osc2Mod:1, osc2Semi:7, osc1Level:100, osc2Level:65, filterCutoff:98, filterResonance:32, ampAttack:0, ampDecay:38, ampSustain:0, ampRelease:30, ...MC(20) },
@@ -149,10 +149,10 @@ const patches = [
   { name:'Dog Whistle',  osc1Wave:3, osc1Level:108, filterCutoff:110, filterResonance:8,  vp1Src:3, vp1Dst:0, vp1Int:28, lfo2Wave:2, lfo2Rate:62, portamento:8,  ampAttack:4, ampSustain:100, ampRelease:35, ...MP(30) },
   { name:'Slow Whistle', osc1Wave:3, osc1Level:108, filterCutoff:100, filterResonance:10, vp1Src:3, vp1Dst:0, vp1Int:18, lfo2Wave:2, lfo2Rate:30, portamento:15, ampAttack:10, ampSustain:100, ampRelease:50, delayTime:42, delayDepth:28, ...MP(22) },
   { name:'Wide Whistle', osc1Wave:3, osc2Wave:2, osc2Tune:8, osc1Level:100, osc2Level:55, filterCutoff:98, filterResonance:12, vp1Src:3, vp1Dst:0, vp1Int:20, lfo2Wave:2, lfo2Rate:40, portamento:12, ampAttack:8, ampSustain:100, ampRelease:45, delayTime:40, delayDepth:30, ...MP(22) },
-  { name:'Velvet Lead',  osc1Wave:3, osc2Wave:0, osc2Semi:12, osc1Level:100, osc2Level:28, filterCutoff:92, filterResonance:20, filterEgInt:18, filterDecay:40, vp1Src:3, vp1Dst:0, vp1Int:15, lfo2Wave:2, lfo2Rate:38, portamento:14, ampAttack:6, ampSustain:100, ampRelease:48, ...MP(20) },
-  { name:'Smooth Lead',  osc1Wave:2, osc2Wave:2, osc2Tune:7, osc1Level:100, osc2Level:65, filterCutoff:88, filterResonance:18, vp1Src:3, vp1Dst:0, vp1Int:18, lfo2Wave:2, lfo2Rate:42, portamento:15, ampAttack:6, ampSustain:100, ampRelease:45, delayTime:38, delayDepth:22, ...MP(20) },
-  { name:'Warm Sine',    osc1Wave:3, osc1Level:108, filterCutoff:88, filterResonance:14, portamento:10, ampAttack:5, ampSustain:100, ampRelease:45, ...MP(18) },
-  { name:'Sweet Sine',   osc1Wave:3, osc2Wave:2, osc2Tune:10, osc1Level:100, osc2Level:50, filterCutoff:90, filterResonance:12, portamento:12, ampAttack:6, ampSustain:100, ampRelease:48, delayTime:45, delayDepth:32, ...MP(20) },
+  { name:'Velvet Lead',  osc1Wave:3, osc2Wave:0, osc2Semi:12, osc1Level:100, osc2Level:28, filterCutoff:92, filterResonance:20, filterEgInt:18, filterDecay:40, vp1Src:3, vp1Dst:0, vp1Int:15, lfo2Wave:2, lfo2Rate:38, portamento:14, ampAttack:6, ampSustain:100, ampRelease:48, ...ML(20) },
+  { name:'Smooth Lead',  osc1Wave:2, osc2Wave:2, osc2Tune:7, osc1Level:100, osc2Level:65, filterCutoff:88, filterResonance:18, vp1Src:3, vp1Dst:0, vp1Int:18, lfo2Wave:2, lfo2Rate:42, portamento:15, ampAttack:6, ampSustain:100, ampRelease:45, delayTime:38, delayDepth:22, ...ML(20) },
+  { name:'Warm Sine',    osc1Wave:3, osc1Level:108, filterCutoff:88, filterResonance:14, portamento:10, ampAttack:5, ampSustain:100, ampRelease:45, ...MC(18) },
+  { name:'Sweet Sine',   osc1Wave:3, osc2Wave:2, osc2Tune:10, osc1Level:100, osc2Level:50, filterCutoff:90, filterResonance:12, portamento:12, ampAttack:6, ampSustain:100, ampRelease:48, delayTime:45, delayDepth:32, ...MC(20) },
 
   // ── B6: Sync / Hard Leads (105–112) — psy/techno, in the sweet spot ────────
   { name:'Sync Lead',    osc1Wave:0, osc2Wave:0, osc2Mod:2, osc2Tune:25, osc1Level:102, osc2Level:52, filterCutoff:88, filterResonance:65, filterEgInt:40, filterDecay:30, ampAttack:2, ampDecay:50, ampSustain:82, ampRelease:32, delayTime:42, delayDepth:32, ...MC(35) },
@@ -166,14 +166,14 @@ const patches = [
 
   // ── B7: Wah / Funky Leads (113–120) — movement, talk box, filter char ──────
   // ── B7: Expressive / Funky Leads (113–120) ───────────────────────────────
-  { name:'Soul Lead',    osc1Wave:3, osc2Wave:2, osc2Semi:12, osc1Level:102, osc2Level:32, filterCutoff:92, filterResonance:18, portamento:14, ampAttack:6, ampSustain:100, ampRelease:48, delayTime:38, delayDepth:25, ...MP(22) },
+  { name:'Soul Lead',    osc1Wave:3, osc2Wave:2, osc2Semi:12, osc1Level:102, osc2Level:32, filterCutoff:92, filterResonance:18, portamento:14, ampAttack:6, ampSustain:100, ampRelease:48, delayTime:38, delayDepth:25, ...MC(22) },
   { name:'Wah Lead',     osc1Wave:0, osc1Level:108, filterCutoff:55, filterResonance:78, vp1Src:2, vp1Dst:4, vp1Int:40, lfo1Wave:2, lfo1Rate:22, ampAttack:3, ampSustain:100, ampRelease:38, ...MC(40) },
   { name:'Funky Lead',   osc1Wave:0, osc1Level:108, filterCutoff:42, filterResonance:72, filterEgInt:52, filterAttack:0, filterDecay:38, filterSustain:10, ampAttack:2, ampSustain:90, ampRelease:38, ...MC(40) },
   { name:'Cocked Wah',   osc1Wave:0, osc1Level:108, filterType:2, filterCutoff:72, filterResonance:85, portamento:10, ampAttack:3, ampSustain:100, ampRelease:38, ...MC(42) },
   { name:'Phaser Lead',  osc1Wave:0, osc2Wave:0, osc2Tune:-5, osc1Level:95, osc2Level:88, filterCutoff:80, filterResonance:40, vp1Src:2, vp1Dst:6, vp1Int:38, lfo1Wave:2, lfo1Rate:18, ampAttack:4, ampSustain:100, ampRelease:42, ...MC(35) },
   { name:'Groove Lead',  osc1Wave:0, osc1Level:108, filterCutoff:68, filterResonance:52, filterEgInt:40, filterDecay:35, portamento:12, ampAttack:3, ampSustain:100, ampRelease:40, ...MC(35) },
   { name:'Squeal',       osc1Wave:0, osc1Level:100, filterCutoff:68, filterResonance:112, filterEgInt:35, filterDecay:35, portamento:18, ampAttack:3, ampDecay:50, ampSustain:80, ampRelease:38, ...MC(30) },
-  { name:'Moog Lead',    osc1Wave:0, osc2Wave:0, osc2Semi:12, osc1Level:102, osc2Level:38, filterCutoff:85, filterResonance:58, filterEgInt:32, filterDecay:40, portamento:18, ampAttack:5, ampSustain:100, ampRelease:45, ...MP(20) },
+  { name:'Moog Lead',    osc1Wave:0, osc2Wave:0, osc2Semi:12, osc1Level:102, osc2Level:38, filterCutoff:85, filterResonance:58, filterEgInt:32, filterDecay:40, portamento:18, ampAttack:5, ampSustain:100, ampRelease:45, ...MC(20) },
 
   // ── B8: Wide / Detuned Leads (121–128) — chorus-width, modern ─────────────
   // ── B8: Funky Keys (121–128) — Rhodes variants, clavs, soul keys ─────────
@@ -303,7 +303,7 @@ const patches = [
   { name:'Spiral FX',    osc1Wave:0, osc2Wave:0, osc2Tune:9, osc1Level:90, osc2Level:82, filterCutoff:62, filterResonance:75, vp1Src:2, vp1Dst:4, vp1Int:40, lfo1Wave:2, lfo1Rate:52, ampAttack:4, ampSustain:100, ampRelease:48, delayTime:50, delayDepth:42, ...ML(42) },
   { name:'Trippy',       osc1Wave:0, osc2Wave:2, osc2Tune:10, osc1Level:90, osc2Level:80, filterCutoff:60, filterResonance:80, vp1Src:2, vp1Dst:0, vp1Int:15, lfo1Wave:2, lfo1Rate:30, ampAttack:5, ampSustain:100, ampRelease:50, delayTime:55, delayDepth:45, ...MC(40) },
   { name:'Shpongle',     osc1Wave:2, osc2Wave:2, osc2Tune:13, osc1Level:88, osc2Level:85, filterCutoff:65, filterResonance:58, vp1Src:2, vp1Dst:4, vp1Int:28, lfo1Wave:2, lfo1Rate:20, ampAttack:8, ampSustain:100, ampRelease:58, delayTime:60, delayDepth:52, ...MC(38) },
-  { name:'Wavering',     osc1Wave:0, osc2Wave:0, osc2Tune:8, osc1Level:90, osc2Level:80, filterCutoff:70, filterResonance:30, vp1Src:2, vp1Dst:0, vp1Int:20, lfo1Wave:2, lfo1Rate:18, ampAttack:6, ampSustain:100, ampRelease:52, delayTime:50, delayDepth:40, ...MP(30) },
+  { name:'Wavering',     osc1Wave:0, osc2Wave:0, osc2Tune:8, osc1Level:90, osc2Level:80, filterCutoff:70, filterResonance:30, vp1Src:2, vp1Dst:0, vp1Int:20, lfo1Wave:2, lfo1Rate:18, ampAttack:6, ampSustain:100, ampRelease:52, delayTime:50, delayDepth:40, ...ML(30) },
   { name:'Drift',        osc1Wave:2, osc2Wave:2, osc2Tune:11, osc1Level:88, osc2Level:82, filterCutoff:65, filterResonance:22, vp1Src:2, vp1Dst:0, vp1Int:10, lfo1Wave:2, lfo1Rate:8,  ampAttack:12, ampSustain:100, ampRelease:65, delayTime:62, delayDepth:52, ...MC(35) },
   { name:'Floating FX',  osc1Wave:3, osc2Wave:2, osc2Tune:9, osc1Level:85, osc2Level:78, filterCutoff:68, filterResonance:18, ampAttack:18, ampSustain:100, ampRelease:80, delayTime:68, delayDepth:58, ...MC(35) },
   { name:'Vortex',       osc1Wave:0, osc1Level:105, filterCutoff:55, filterResonance:92, vp1Src:2, vp1Dst:4, vp1Int:50, lfo1Wave:2, lfo1Rate:78, ampAttack:2, ampSustain:100, ampRelease:38, delayTime:42, delayDepth:35, ...ML(45) },
@@ -330,12 +330,12 @@ const patches = [
 
   // ── D6: Sweeps / Risers (233–240) — build-up tools ───────────────────────
   { name:'Filter Rise',  osc1Wave:0, osc2Wave:0, osc2Tune:9, osc1Level:105, osc2Level:80, filterCutoff:25, filterResonance:65, filterEgInt:60, filterAttack:80, filterDecay:100, ampAttack:0, ampSustain:100, ampRelease:35, ...MC(45) },
-  { name:'Pitch Rise',   osc1Wave:0, osc1Level:108, filterCutoff:88, filterResonance:32, vp1Src:1, vp1Dst:0, vp1Int:55, ampAttack:0, ampDecay:70, ampSustain:70, ampRelease:40, ...MP(40) },
+  { name:'Pitch Rise',   osc1Wave:0, osc1Level:108, filterCutoff:88, filterResonance:32, vp1Src:1, vp1Dst:0, vp1Int:55, ampAttack:0, ampDecay:70, ampSustain:70, ampRelease:40, ...MC(40) },
   { name:'Noise Rise',   osc1Wave:6, osc1Level:100, noiseLevel:88, filterCutoff:22, filterResonance:58, filterEgInt:60, filterAttack:90, filterDecay:100, ampAttack:10, ampSustain:100, ampRelease:40, ...MC(45) },
   { name:'Sub Drop',     osc1Wave:3, osc1Level:115, filterCutoff:60, filterResonance:15, vp1Src:1, vp1Dst:0, vp1Int:-38, ampAttack:0, ampDecay:90, ampSustain:50, ampRelease:60, ...MC(30) },
   { name:'Slow Rise',    osc1Wave:0, osc2Wave:2, osc2Tune:8, osc1Level:98, osc2Level:80, filterCutoff:20, filterResonance:55, filterEgInt:58, filterAttack:100, filterDecay:100, ampAttack:15, ampSustain:100, ampRelease:50, ...MC(45) },
   { name:'Rev Env',      osc1Wave:0, osc2Wave:0, osc2Tune:9, osc1Level:100, osc2Level:78, filterCutoff:65, filterResonance:35, ampAttack:100, ampDecay:40, ampSustain:80, ampRelease:55, delayTime:45, delayDepth:35, ...MC(40) },
-  { name:'Drop FX',      osc1Wave:0, osc1Level:108, filterCutoff:90, filterResonance:45, vp1Src:1, vp1Dst:0, vp1Int:-55, ampAttack:0, ampDecay:45, ampSustain:0, ampRelease:28, ...MP(40) },
+  { name:'Drop FX',      osc1Wave:0, osc1Level:108, filterCutoff:90, filterResonance:45, vp1Src:1, vp1Dst:0, vp1Int:-55, ampAttack:0, ampDecay:45, ampSustain:0, ampRelease:28, ...MC(40) },
   { name:'Wave Rise',    osc1Wave:2, osc2Wave:2, osc2Tune:10, osc1Level:95, osc2Level:82, filterCutoff:30, filterResonance:70, vp1Src:2, vp1Dst:4, vp1Int:45, lfo1Wave:2, lfo1Rate:55, filterEgInt:50, filterAttack:70, filterDecay:100, ampAttack:5, ampSustain:100, ampRelease:45, ...MC(45) },
 
   // ── D7: Alien / Psy FX (241–248) ─────────────────────────────────────────
