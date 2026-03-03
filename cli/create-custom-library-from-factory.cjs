@@ -66,164 +66,124 @@
 const fs = require('fs');
 
 const PATCH_SIZE = 254;
-const TOTAL_PATCHES = 256; // microKORG S has 256 patches (2 banks of 128)
 
 // Absolute byte offsets within a 254-byte patch
 const T1 = 38;   // Timbre 1 start
 const T2 = 146;  // Timbre 2 start
 
-const P = {
-  // Name
-  NAME: 0,       // 12 bytes, space-padded ASCII
-
-  // Global (byte 16: voice mode — 0=Single,2=Layer,3=Vocoder in B4,5)
-  VOICE_MODE: 16,
-
-  // Delay FX
-  DELAY_SYNC_BASE: 19,
-  DELAY_TIME: 20,
-  DELAY_DEPTH: 21,
-  DELAY_TYPE: 22,
-
-  // Mod FX
-  MOD_RATE: 23,
-  MOD_DEPTH: 24,
-  MOD_TYPE: 25,
-
-  // EQ (factory init byte analysis shows these mappings)
-  EQ_HI_GAIN: 26,   // 64 = 0 dB (factory init: 0x40)
-  EQ_HI_FREQ: 27,   // (factory init: 0x00)
-  EQ_LOW_GAIN: 28,  // 64 = 0 dB (factory init: 0x40)
-  EQ_LOW_FREQ: 29,  // (factory init: 0x00)
-
-  // Arp
-  ARP_TEMPO_MSB: 30,
-  ARP_TEMPO_LSB: 31,
-  ARP_FLAGS: 32,   // B7=on/off, B6=latch, B4,5=target, B0=keysync
-  ARP_TYPE_RANGE: 33,
-  ARP_GATE: 34,
-  ARP_RESOLUTION: 35,
-  ARP_SWING: 36,
-
-  KBD_OCTAVE: 37,
-};
+// Factory init patch — ground truth from initpatch.syx decoded with slice(7,-1)
+// All 254 bytes verbatim. Use as base for every patch.
+const FACTORY_INIT = Buffer.from([
+  0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20,0x20, // B000-011 name
+  0x00,0x00,0x07,0x00, // B012-015
+  0x40,0x00,0x3c,0x05, // B016-019  VOICE_MODE=0x40
+  0x28,0x00,0x00,0x14,0x00,0x00, // B020-025  DELAY_TIME=0x28,DELAY_TYPE=0x00,MOD_TYPE=0x00
+  0x14,0x40,0x0f,0x40, // B026-029  EQ
+  0x00,0x78,0x00,0x00,0x50,0x01,0x00,0x00, // B030-037  ARP(tempo=120),KBD_OCTAVE=0x00
+  // Timbre 1 (B038-B145)
+  0xff,0x70,0x0a,0x40,0x42,0x40,0x45,0x00,0x00,0x00,0x00,0x00, // +00..+11
+  0x00,0x40,0x40,0x00,0x7f,0x00,0x00,0x01,0x7f,0x14,0x40,0x40, // +12..+23
+  0x40,0x7f,0x40,0x00,0x40,0x40,0x00,0x40,0x7f,0x00,0x00,0x40, // +24..+35
+  0x7f,0x00,0x02,0x0a,0x03,0x02,0x46,0x0c, // +36..+43
+  0x02,0x40,0x03,0x40,0x42,0x40,0x43,0x40,0x43,0x71,0x01,0x01, // +44..+55
+  0x40,0x40,0x40,0x40,0x40,0x40,0x40,0x40,0x40,0x40,0x40,0x40, // +56..+67
+  0x40,0x40,0x40,0x40,0x40,0x40,0x40,0x40,0x40,0x40,0x40,0x40, // +68..+79
+  0x40,0x40,0x40,0x40,0x40,0x40,0x40,0x40,0x40,0x40,0x40,0x40, // +80..+91
+  0x40,0x40,0x40,0x40,0x40,0x40,0x40,0x40,0x40,0x40,0x40,0x40, // +92..+103
+  0x40,0x40,0x40,0x40, // +104..+107
+  // Timbre 2 (B146-B253)
+  0x7f,0x70,0x0a,0x40,0x42,0x40,0x45,0x00,0x00,0x00,0x00,0x00, // +00..+11
+  0x00,0x40,0x40,0x00,0x7f,0x00,0x00,0x01,0x7f,0x14,0x40,0x40, // +12..+23
+  0x40,0x7f,0x40,0x00,0x40,0x40,0x00,0x40,0x7f,0x00,0x00,0x40, // +24..+35
+  0x7f,0x00,0x02,0x0a,0x03,0x02,0x46,0x0c, // +36..+43
+  0x02,0x40,0x03,0x40,0x42,0x40,0x43,0x40,0x43,0xf1,0x01,0x01, // +44..+55  (0xf1 vs T1's 0x71)
+  0x40,0x40,0x40,0x40,0x40,0x40,0x40,0x40,0x40,0x40,0x40,0x40, // +56..+67
+  0x40,0x40,0x40,0x40,0x40,0x40,0x40,0x40,0x40,0x40,0x40,0x40, // +68..+79
+  0x40,0x40,0x40,0x40,0x40,0x40,0x40,0x40,0x40,0x40,0x40,0x40, // +80..+91
+  0x40,0x40,0x40,0x40,0x40,0x40,0x40,0x40,0x40,0x40,0x40,0x40, // +92..+103
+  0x40,0x40,0x40,0x40, // +104..+107
+]);
 
 // Build offset helpers for timbre params
 function t(timbreBase, offset) { return timbreBase + offset; }
 
 function createPatch(name, cfg = {}) {
-  const patch = new Uint8Array(PATCH_SIZE);
-  // Initialize all bytes to 0x40 (center value for parameters like Tune, Bend, Transpose, Filter EG, AMP Pan, etc.)
-  patch.fill(0x40);
+  // Start from factory init — every byte correct by default
+  const patch = new Uint8Array(FACTORY_INIT);
 
   // Name: 12 bytes, space-padded
   const nameBytes = Buffer.from(name.padEnd(12, ' ').slice(0, 12), 'ascii');
   for (let i = 0; i < 12; i++) patch[i] = nameBytes[i];
 
-  // Global: MUST match factory init patch (factory-prg[0])
-  // CRITICAL BUG FIXES - all values from verified factory init patch
-  patch[P.VOICE_MODE] = 0x00;       // Single voice (factory init: 0x00, NOT 0x40!)
-  patch[P.DELAY_TIME] = 0x80;       // (factory init: 0x80, NOT 0!)
-  patch[P.DELAY_DEPTH] = 0x00;      // (factory init: 0x00)
-  patch[P.DELAY_TYPE] = 0x14;       // (factory init: 0x14, NOT 0!)
-  patch[P.MOD_RATE] = 0x00;         // (factory init: 0x00)
-  patch[P.MOD_DEPTH] = 0x00;        // (factory init: 0x00)
-  patch[P.MOD_TYPE] = 0x14;         // (factory init: 0x14, NOT 0x01 or 1!)
-  patch[P.EQ_HI_GAIN] = 0x40;       // (factory init: 0x40)
-  patch[P.EQ_HI_FREQ] = 0x00;       // Added: factory init has 0x00
-  patch[P.EQ_LOW_GAIN] = 0x40;      // (factory init: 0x40)
-  patch[P.EQ_LOW_FREQ] = 0x00;      // Added: factory init has 0x00
-  patch[P.ARP_TEMPO_MSB] = 0x78;    // (factory init: 0x78, NOT 0!)
-  patch[P.ARP_TEMPO_LSB] = 0x80;    // (factory init: 0x80, NOT 120!)
-  patch[P.ARP_FLAGS] = 0x80;        // Added: factory init
-  patch[P.ARP_TYPE_RANGE] = 0xD0;   // Added: factory init
-  patch[P.ARP_GATE] = 0x88;         // Added: factory init
-  patch[P.ARP_RESOLUTION] = 0x00;   // Added: factory init
-  patch[P.ARP_SWING] = 0x00;        // Added: factory init
-  patch[P.KBD_OCTAVE] = 0x7F;       // (factory init: 0x7F, correct)
-
-  // Optional global delay (override defaults if specified)
-  if (cfg.delayTime  !== undefined) patch[P.DELAY_TIME]  = clamp(cfg.delayTime);
-  if (cfg.delayDepth !== undefined) patch[P.DELAY_DEPTH] = clamp(cfg.delayDepth);
-  if (cfg.delayType  !== undefined) patch[P.DELAY_TYPE]  = clamp(cfg.delayType, 0, 2);
-  if (cfg.modRate    !== undefined) patch[P.MOD_RATE]    = clamp(cfg.modRate);
-  if (cfg.modDepth   !== undefined) patch[P.MOD_DEPTH]   = clamp(cfg.modDepth);
-  if (cfg.modType    !== undefined) patch[P.MOD_TYPE]    = clamp(cfg.modType, 0, 2);
-
-  // Timbre 1 defaults - MUST match factory init patch
   const tb = T1;
-  patch[t(tb, 0)]  = 0x70;          // MIDI Channel (factory init: 0x70, NOT 0xFF!)
-  patch[t(tb, 1)]  = 0x0A;          // Assign (factory init: 0x0A, NOT 0x40!)
-  patch[t(tb, 2)]  = 0x40;          // Unison Detune (factory init: stays at fill 0x40)
-  patch[t(tb, 3)]  = 0x80;          // Tune (factory init: 0x80, NOT 64!)
-  patch[t(tb, 4)]  = 0xC0;          // Bend (factory init: 0xC0, NOT 64!)
-  patch[t(tb, 5)]  = 0x45;          // Transpose legacy (factory init: 0x45, NOT 64!)
-  // CRITICAL: Actual transpose is at T1+74 (byte 112 absolute), discovered via hardware dump analysis
-  // Value encoding: 64=0, range 64±24 semitones. E.g., 52=−12, 40=−24
-  patch[t(tb, 74)] = 64 + clamp(cfg.transpose || 0, -24, 24); // Write transpose to CORRECT offset
-  // Vibrato Intensity: factory init is 0x00, NOT 0x41!
-  patch[t(tb, 6)]  = cfg.vibratoIntensity !== undefined ? 64 + clamp(cfg.vibratoIntensity, -63, 63) : 0x00;
-  patch[t(tb, 7)]  = cfg.osc1Wave  !== undefined ? clamp(cfg.osc1Wave, 0, 7) : 0x00;  // OSC1 Wave (factory: 0x00)
-  patch[t(tb, 8)]  = cfg.osc1Ctrl1 !== undefined ? clamp(cfg.osc1Ctrl1) : 0x00;
-  patch[t(tb, 9)]  = cfg.osc1Ctrl2 !== undefined ? clamp(cfg.osc1Ctrl2) : 0x00;
-  patch[t(tb, 10)] = 0x00;          // DWGS Wave (factory init: 0x00)
-  patch[t(tb, 11)] = 0x00;          // Dummy (factory init: 0x00)
-  patch[t(tb, 12)] = (clamp(cfg.osc2Mod  || 0, 0, 3) << 4) | clamp(cfg.osc2Wave || 0, 0, 2);
-  patch[t(tb, 13)] = 64 + clamp(cfg.osc2Semi || 0, -24, 24); // Semitone offset from center
-  patch[t(tb, 14)] = 64 + clamp(cfg.osc2Tune || 0, -63, 63); // Fine tune ±63 cents
-  patch[t(tb, 15)] = cfg.portamento !== undefined ? clamp(cfg.portamento) : 0;
-  patch[t(tb, 16)] = cfg.osc1Level  !== undefined ? clamp(cfg.osc1Level)  : 100; // OSC1 Level
-  patch[t(tb, 17)] = cfg.osc2Level  !== undefined ? clamp(cfg.osc2Level)  : 0;
-  patch[t(tb, 18)] = cfg.noiseLevel !== undefined ? clamp(cfg.noiseLevel) : 0;
-  // Filter Type: factory init is 0x7F, NOT 0x01!
-  patch[t(tb, 19)] = cfg.filterType !== undefined ? clamp(cfg.filterType, 0, 3) : 0x7F;
-  patch[t(tb, 20)] = cfg.filterCutoff    !== undefined ? clamp(cfg.filterCutoff)    : 100;
-  patch[t(tb, 21)] = cfg.filterResonance !== undefined ? clamp(cfg.filterResonance) : 0;
-  patch[t(tb, 22)] = 64 + clamp(cfg.filterEgInt || 0, -63, 63); // EG intensity (signed)
-  patch[t(tb, 23)] = 64;             // Filter velocity sense = 0
-  patch[t(tb, 24)] = 64;             // Filter KBD track = 0
-  patch[t(tb, 25)] = cfg.ampLevel   !== undefined ? clamp(cfg.ampLevel)   : 100; // AMP Level
-  patch[t(tb, 26)] = 64;             // AMP Panpot = center
-  patch[t(tb, 28)] = 64;             // AMP velocity sense = 0
-  patch[t(tb, 29)] = 64;             // AMP KBD track = 0
-  // EG1 (Filter)
-  patch[t(tb, 30)] = cfg.filterAttack  !== undefined ? clamp(cfg.filterAttack)  : 0;
-  patch[t(tb, 31)] = cfg.filterDecay   !== undefined ? clamp(cfg.filterDecay)   : 50;
-  patch[t(tb, 32)] = cfg.filterSustain !== undefined ? clamp(cfg.filterSustain) : 0;
-  patch[t(tb, 33)] = cfg.filterRelease !== undefined ? clamp(cfg.filterRelease) : 50;
-  // EG2 (Amp)
-  patch[t(tb, 34)] = cfg.ampAttack  !== undefined ? clamp(cfg.ampAttack)  : 5;
-  patch[t(tb, 35)] = cfg.ampDecay   !== undefined ? clamp(cfg.ampDecay)   : 50;
-  patch[t(tb, 36)] = cfg.ampSustain !== undefined ? clamp(cfg.ampSustain) : 100;
-  patch[t(tb, 37)] = cfg.ampRelease !== undefined ? clamp(cfg.ampRelease) : 50;
+
+  // Vibrato: factory default is +5 (0x45); our default is 0 (0x40, center/off)
+  const vibrato = cfg.vibratoIntensity !== undefined
+    ? 64 + clamp(cfg.vibratoIntensity, -63, 63)
+    : 0x40;
+  patch[t(tb, 6)]  = vibrato;
+  patch[t(T2, 6)]  = vibrato;
+
+  // Transpose: T1+5 and T1+13=OSC2_SEMI both affect pitch; use T1+5 for transpose
+  // Factory T1+5=0x40 (center). Encoding: 64 + semitones
+  if (cfg.transpose !== undefined) {
+    patch[t(tb, 5)] = 64 + clamp(cfg.transpose, -24, 24);
+  }
+
+  // OSC1
+  if (cfg.osc1Wave  !== undefined) patch[t(tb, 7)]  = clamp(cfg.osc1Wave, 0, 7);
+  if (cfg.osc1Ctrl1 !== undefined) patch[t(tb, 8)]  = clamp(cfg.osc1Ctrl1);
+  if (cfg.osc1Ctrl2 !== undefined) patch[t(tb, 9)]  = clamp(cfg.osc1Ctrl2);
+
+  // OSC2
+  if (cfg.osc2Mod !== undefined || cfg.osc2Wave !== undefined)
+    patch[t(tb, 12)] = (clamp(cfg.osc2Mod || 0, 0, 3) << 4) | clamp(cfg.osc2Wave || 0, 0, 2);
+  if (cfg.osc2Semi !== undefined) patch[t(tb, 13)] = 64 + clamp(cfg.osc2Semi, -24, 24);
+  if (cfg.osc2Tune !== undefined) patch[t(tb, 14)] = 64 + clamp(cfg.osc2Tune, -63, 63);
+
+  // Mixer
+  if (cfg.osc1Level  !== undefined) patch[t(tb, 16)] = clamp(cfg.osc1Level);
+  if (cfg.osc2Level  !== undefined) patch[t(tb, 17)] = clamp(cfg.osc2Level);
+  if (cfg.noiseLevel !== undefined) patch[t(tb, 18)] = clamp(cfg.noiseLevel);
+
+  // Filter (type: factory=0x01=12LPF; 0=24LPF,1=12LPF,2=12BPF,3=12HPF)
+  if (cfg.filterType      !== undefined) patch[t(tb, 19)] = clamp(cfg.filterType, 0, 3);
+  if (cfg.filterCutoff    !== undefined) patch[t(tb, 20)] = clamp(cfg.filterCutoff);
+  if (cfg.filterResonance !== undefined) patch[t(tb, 21)] = clamp(cfg.filterResonance);
+  if (cfg.filterEgInt     !== undefined) patch[t(tb, 22)] = 64 + clamp(cfg.filterEgInt, -63, 63);
+
+  // AMP
+  if (cfg.ampLevel !== undefined) patch[t(tb, 25)] = clamp(cfg.ampLevel);
+
+  // Filter EG
+  if (cfg.filterAttack  !== undefined) patch[t(tb, 30)] = clamp(cfg.filterAttack);
+  if (cfg.filterDecay   !== undefined) patch[t(tb, 31)] = clamp(cfg.filterDecay);
+  if (cfg.filterSustain !== undefined) patch[t(tb, 32)] = clamp(cfg.filterSustain);
+  if (cfg.filterRelease !== undefined) patch[t(tb, 33)] = clamp(cfg.filterRelease);
+
+  // Amp EG
+  if (cfg.ampAttack  !== undefined) patch[t(tb, 34)] = clamp(cfg.ampAttack);
+  if (cfg.ampDecay   !== undefined) patch[t(tb, 35)] = clamp(cfg.ampDecay);
+  if (cfg.ampSustain !== undefined) patch[t(tb, 36)] = clamp(cfg.ampSustain);
+  if (cfg.ampRelease !== undefined) patch[t(tb, 37)] = clamp(cfg.ampRelease);
+
   // LFO1
-  patch[t(tb, 38)] = cfg.lfo1Wave !== undefined ? (clamp(cfg.lfo1Wave, 0, 3)) : 0;
-  patch[t(tb, 39)] = cfg.lfo1Rate !== undefined ? clamp(cfg.lfo1Rate) : 0;
+  if (cfg.lfo1Wave !== undefined) patch[t(tb, 38)] = clamp(cfg.lfo1Wave, 0, 3);
+  if (cfg.lfo1Rate !== undefined) patch[t(tb, 39)] = clamp(cfg.lfo1Rate);
+
   // LFO2
-  patch[t(tb, 41)] = cfg.lfo2Wave !== undefined ? (clamp(cfg.lfo2Wave, 0, 3)) : 0;
-  patch[t(tb, 42)] = cfg.lfo2Rate !== undefined ? clamp(cfg.lfo2Rate) : 0;
-  // Virtual Patch 1 (modulation routing)
+  if (cfg.lfo2Wave !== undefined) patch[t(tb, 41)] = clamp(cfg.lfo2Wave, 0, 3);
+  if (cfg.lfo2Rate !== undefined) patch[t(tb, 42)] = clamp(cfg.lfo2Rate);
+
+  // Virtual Patches
   if (cfg.vp1Src !== undefined && cfg.vp1Dst !== undefined) {
-    patch[t(tb, 44)] = (clamp(cfg.vp1Dst, 0, 7) << 4) | clamp(cfg.vp1Src, 0, 7);
+    patch[t(tb, 44)] = (clamp(cfg.vp1Dst, 0, 15) << 4) | clamp(cfg.vp1Src, 0, 15);
     patch[t(tb, 45)] = 64 + clamp(cfg.vp1Int || 0, -63, 63);
-  } else {
-    patch[t(tb, 45)] = 64;
   }
   if (cfg.vp2Src !== undefined && cfg.vp2Dst !== undefined) {
-    patch[t(tb, 46)] = (clamp(cfg.vp2Dst, 0, 7) << 4) | clamp(cfg.vp2Src, 0, 7);
+    patch[t(tb, 46)] = (clamp(cfg.vp2Dst, 0, 15) << 4) | clamp(cfg.vp2Src, 0, 15);
     patch[t(tb, 47)] = 64 + clamp(cfg.vp2Int || 0, -63, 63);
-  } else {
-    patch[t(tb, 47)] = 64;
   }
-  patch[t(tb, 49)] = 64;
-  patch[t(tb, 51)] = 64;
-
-  // Timbre 2 defaults - MUST match factory init patch (most stays at fill 0x40, but critical bytes override)
-  const tb2 = T2;
-  patch[t(tb2, 0)]  = 0x00;          // MIDI Channel (factory init: 0x00)
-  patch[t(tb2, 1)]  = 0x8A;          // Assign (factory init: 0x8A)
-  patch[t(tb2, 6)]  = cfg.vibratoIntensity !== undefined ? 64 + clamp(cfg.vibratoIntensity, -63, 63) : 0x00; // Vibrato
-  patch[t(tb2, 19)] = cfg.filterType !== undefined ? clamp(cfg.filterType, 0, 3) : 0x7F; // Filter Type (factory init: 0x7F)
 
   return patch;
 }
