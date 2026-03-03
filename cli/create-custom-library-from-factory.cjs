@@ -175,6 +175,9 @@ function createPatch(name, cfg = {}) {
   if (cfg.lfo2Wave !== undefined) patch[t(tb, 41)] = clamp(cfg.lfo2Wave, 0, 3);
   if (cfg.lfo2Rate !== undefined) patch[t(tb, 42)] = clamp(cfg.lfo2Rate);
 
+  // Keyboard Octave (byte 37): 0=normal, -1=0x7F, encoding: low 7 bits of value
+  if (cfg.kbdOctave !== undefined) patch[37] = cfg.kbdOctave & 0x7F;
+
   // Virtual Patches
   if (cfg.vp1Src !== undefined && cfg.vp1Dst !== undefined) {
     patch[t(tb, 44)] = (clamp(cfg.vp1Dst, 0, 15) << 4) | clamp(cfg.vp1Src, 0, 15);
@@ -234,7 +237,8 @@ async function main() {
 
   const allRaw = Buffer.alloc(256 * PATCH_SIZE);
   patches.forEach((cfg, i) => {
-    allRaw.set(createPatch(cfg.name, cfg), i * PATCH_SIZE);
+    const patchCfg = i < 128 ? { kbdOctave: -1, ...cfg } : cfg;
+    allRaw.set(createPatch(patchCfg.name, patchCfg), i * PATCH_SIZE);
   });
 
   console.log(`Raw patch data: ${allRaw.length} bytes (${allRaw.length / PATCH_SIZE} patches)`);
