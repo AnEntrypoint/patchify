@@ -90,11 +90,11 @@ const P = {
   MOD_DEPTH: 24,
   MOD_TYPE: 25,
 
-  // EQ
-  EQ_HI_FREQ: 26,
-  EQ_HI_GAIN: 27,   // 64 = 0 dB
-  EQ_LOW_FREQ: 28,
-  EQ_LOW_GAIN: 29,  // 64 = 0 dB
+  // EQ (factory init byte analysis shows these mappings)
+  EQ_HI_GAIN: 26,   // 64 = 0 dB (factory init: 0x40)
+  EQ_HI_FREQ: 27,   // (factory init: 0x00)
+  EQ_LOW_GAIN: 28,  // 64 = 0 dB (factory init: 0x40)
+  EQ_LOW_FREQ: 29,  // (factory init: 0x00)
 
   // Arp
   ARP_TEMPO_MSB: 30,
@@ -120,20 +120,27 @@ function createPatch(name, cfg = {}) {
   const nameBytes = Buffer.from(name.padEnd(12, ' ').slice(0, 12), 'ascii');
   for (let i = 0; i < 12; i++) patch[i] = nameBytes[i];
 
-  // Global: single voice, no arp, flat EQ, no FX, normal octave
-  // CRITICAL: Use FACTORY DEFAULTS, not 0
-  patch[P.VOICE_MODE] = 0x40;       // Single voice (factory: 0x40)
-  patch[P.DELAY_TIME] = 0;          // Delay time = 0
-  patch[P.DELAY_DEPTH] = 0;         // Delay depth = 0
-  patch[P.DELAY_TYPE] = 0;          // Delay type OFF
-  patch[P.MOD_RATE] = 0;            // Mod rate = 0
-  patch[P.MOD_DEPTH] = 0;           // Mod depth = 0
-  patch[P.MOD_TYPE] = 1;            // Mod type OFF (factory: 0x01, NOT 0!)
-  patch[P.EQ_HI_GAIN] = 64;         // 0 dB
-  patch[P.EQ_LOW_GAIN] = 64;        // 0 dB
-  patch[P.ARP_TEMPO_MSB] = 0;
-  patch[P.ARP_TEMPO_LSB] = 120;     // 120 BPM
-  patch[P.KBD_OCTAVE] = 0x7F;       // Keyboard octave = 0 (factory: 0x7F=127, NOT 0!)
+  // Global: MUST match factory init patch (factory-prg[0])
+  // CRITICAL BUG FIXES - all values from verified factory init patch
+  patch[P.VOICE_MODE] = 0x00;       // Single voice (factory init: 0x00, NOT 0x40!)
+  patch[P.DELAY_TIME] = 0x80;       // (factory init: 0x80, NOT 0!)
+  patch[P.DELAY_DEPTH] = 0x00;      // (factory init: 0x00)
+  patch[P.DELAY_TYPE] = 0x14;       // (factory init: 0x14, NOT 0!)
+  patch[P.MOD_RATE] = 0x00;         // (factory init: 0x00)
+  patch[P.MOD_DEPTH] = 0x00;        // (factory init: 0x00)
+  patch[P.MOD_TYPE] = 0x14;         // (factory init: 0x14, NOT 0x01 or 1!)
+  patch[P.EQ_HI_GAIN] = 0x40;       // (factory init: 0x40)
+  patch[P.EQ_HI_FREQ] = 0x00;       // Added: factory init has 0x00
+  patch[P.EQ_LOW_GAIN] = 0x40;      // (factory init: 0x40)
+  patch[P.EQ_LOW_FREQ] = 0x00;      // Added: factory init has 0x00
+  patch[P.ARP_TEMPO_MSB] = 0x78;    // (factory init: 0x78, NOT 0!)
+  patch[P.ARP_TEMPO_LSB] = 0x80;    // (factory init: 0x80, NOT 120!)
+  patch[P.ARP_FLAGS] = 0x80;        // Added: factory init
+  patch[P.ARP_TYPE_RANGE] = 0xD0;   // Added: factory init
+  patch[P.ARP_GATE] = 0x88;         // Added: factory init
+  patch[P.ARP_RESOLUTION] = 0x00;   // Added: factory init
+  patch[P.ARP_SWING] = 0x00;        // Added: factory init
+  patch[P.KBD_OCTAVE] = 0x7F;       // (factory init: 0x7F, correct)
 
   // Optional global delay (override defaults if specified)
   if (cfg.delayTime  !== undefined) patch[P.DELAY_TIME]  = clamp(cfg.delayTime);
@@ -143,21 +150,24 @@ function createPatch(name, cfg = {}) {
   if (cfg.modDepth   !== undefined) patch[P.MOD_DEPTH]   = clamp(cfg.modDepth);
   if (cfg.modType    !== undefined) patch[P.MOD_TYPE]    = clamp(cfg.modType, 0, 2);
 
-  // Timbre 1 defaults (must produce audible sound)
+  // Timbre 1 defaults - MUST match factory init patch
   const tb = T1;
-  patch[t(tb, 0)]  = 0xFF & 0x7F;   // MIDI Channel = global (stored as high value; device clips)
-  patch[t(tb, 1)]  = 0b01000000;     // Poly assign
-  patch[t(tb, 3)]  = 64;             // Tune = 0 cents
-  patch[t(tb, 4)]  = 64;             // Bend range = 0
-  patch[t(tb, 5)]  = 64;             // Transpose = 0 (legacy offset, kept for stability)
+  patch[t(tb, 0)]  = 0x70;          // MIDI Channel (factory init: 0x70, NOT 0xFF!)
+  patch[t(tb, 1)]  = 0x0A;          // Assign (factory init: 0x0A, NOT 0x40!)
+  patch[t(tb, 2)]  = 0x40;          // Unison Detune (factory init: stays at fill 0x40)
+  patch[t(tb, 3)]  = 0x80;          // Tune (factory init: 0x80, NOT 64!)
+  patch[t(tb, 4)]  = 0xC0;          // Bend (factory init: 0xC0, NOT 64!)
+  patch[t(tb, 5)]  = 0x45;          // Transpose legacy (factory init: 0x45, NOT 64!)
   // CRITICAL: Actual transpose is at T1+74 (byte 112 absolute), discovered via hardware dump analysis
   // Value encoding: 64=0, range 64±24 semitones. E.g., 52=−12, 40=−24
   patch[t(tb, 74)] = 64 + clamp(cfg.transpose || 0, -24, 24); // Write transpose to CORRECT offset
-  // Vibrato Intensity: factory default 0x41 (65), not 0x40!
-  patch[t(tb, 6)]  = cfg.vibratoIntensity !== undefined ? 64 + clamp(cfg.vibratoIntensity, -63, 63) : 0x41;
-  patch[t(tb, 7)]  = cfg.osc1Wave  !== undefined ? clamp(cfg.osc1Wave, 0, 7) : 0;  // Saw
-  patch[t(tb, 8)]  = cfg.osc1Ctrl1 !== undefined ? clamp(cfg.osc1Ctrl1) : 0;
-  patch[t(tb, 9)]  = cfg.osc1Ctrl2 !== undefined ? clamp(cfg.osc1Ctrl2) : 0;
+  // Vibrato Intensity: factory init is 0x00, NOT 0x41!
+  patch[t(tb, 6)]  = cfg.vibratoIntensity !== undefined ? 64 + clamp(cfg.vibratoIntensity, -63, 63) : 0x00;
+  patch[t(tb, 7)]  = cfg.osc1Wave  !== undefined ? clamp(cfg.osc1Wave, 0, 7) : 0x00;  // OSC1 Wave (factory: 0x00)
+  patch[t(tb, 8)]  = cfg.osc1Ctrl1 !== undefined ? clamp(cfg.osc1Ctrl1) : 0x00;
+  patch[t(tb, 9)]  = cfg.osc1Ctrl2 !== undefined ? clamp(cfg.osc1Ctrl2) : 0x00;
+  patch[t(tb, 10)] = 0x00;          // DWGS Wave (factory init: 0x00)
+  patch[t(tb, 11)] = 0x00;          // Dummy (factory init: 0x00)
   patch[t(tb, 12)] = (clamp(cfg.osc2Mod  || 0, 0, 3) << 4) | clamp(cfg.osc2Wave || 0, 0, 2);
   patch[t(tb, 13)] = 64 + clamp(cfg.osc2Semi || 0, -24, 24); // Semitone offset from center
   patch[t(tb, 14)] = 64 + clamp(cfg.osc2Tune || 0, -63, 63); // Fine tune ±63 cents
@@ -165,8 +175,8 @@ function createPatch(name, cfg = {}) {
   patch[t(tb, 16)] = cfg.osc1Level  !== undefined ? clamp(cfg.osc1Level)  : 100; // OSC1 Level
   patch[t(tb, 17)] = cfg.osc2Level  !== undefined ? clamp(cfg.osc2Level)  : 0;
   patch[t(tb, 18)] = cfg.noiseLevel !== undefined ? clamp(cfg.noiseLevel) : 0;
-  // Filter Type: factory default 0x01 (12LPF), not 0x00 (which enables HPF!)
-  patch[t(tb, 19)] = cfg.filterType !== undefined ? clamp(cfg.filterType, 0, 3) : 1;
+  // Filter Type: factory init is 0x7F, NOT 0x01!
+  patch[t(tb, 19)] = cfg.filterType !== undefined ? clamp(cfg.filterType, 0, 3) : 0x7F;
   patch[t(tb, 20)] = cfg.filterCutoff    !== undefined ? clamp(cfg.filterCutoff)    : 100;
   patch[t(tb, 21)] = cfg.filterResonance !== undefined ? clamp(cfg.filterResonance) : 0;
   patch[t(tb, 22)] = 64 + clamp(cfg.filterEgInt || 0, -63, 63); // EG intensity (signed)
@@ -207,6 +217,13 @@ function createPatch(name, cfg = {}) {
   }
   patch[t(tb, 49)] = 64;
   patch[t(tb, 51)] = 64;
+
+  // Timbre 2 defaults - MUST match factory init patch (most stays at fill 0x40, but critical bytes override)
+  const tb2 = T2;
+  patch[t(tb2, 0)]  = 0x00;          // MIDI Channel (factory init: 0x00)
+  patch[t(tb2, 1)]  = 0x8A;          // Assign (factory init: 0x8A)
+  patch[t(tb2, 6)]  = cfg.vibratoIntensity !== undefined ? 64 + clamp(cfg.vibratoIntensity, -63, 63) : 0x00; // Vibrato
+  patch[t(tb2, 19)] = cfg.filterType !== undefined ? clamp(cfg.filterType, 0, 3) : 0x7F; // Filter Type (factory init: 0x7F)
 
   return patch;
 }
