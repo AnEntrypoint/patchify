@@ -7,13 +7,14 @@
 // No global FX — clean by default, enable on hardware
 
 // Mod wheel VP helpers (vp2Src=6=ModWheel)
-const MC  = (n) => ({ vp2Src:6, vp2Dst:4, vp2Int:n });   // Mod→Cutoff
+// VP dst: 0=Pitch, 1=OSC2Pitch, 2=Cutoff, 3=Amp, 4=LFO1Freq, 5=LFO2Freq
+const MC  = (n) => ({ vp2Src:6, vp2Dst:2, vp2Int:n });   // Mod→Cutoff
 const MP  = (n) => ({ vp2Src:6, vp2Dst:0, vp2Int:n });   // Mod→Pitch
-const MO2 = (n) => ({ vp2Src:6, vp2Dst:1, vp2Int:n });   // Mod→OSC2 Pitch
-const MC1 = (n) => ({ vp2Src:6, vp2Dst:2, vp2Int:n });   // Mod→Ctrl1 (pulse width)
-const ML  = (n) => ({ vp2Src:6, vp2Dst: 5, vp2Int:n });   // Mod→LFO2 Freq
-const MA  = (n) => ({ vp2Src:6, vp2Dst:5, vp2Int:n });   // Mod→AMP
-const MFE = (n) => ({ vp2Src:6, vp2Dst:3, vp2Int:n });   // Mod→Filter EG Int
+const MO2 = (n) => ({ vp2Src:6, vp2Dst:1, vp2Int:n });   // Mod→OSC2Pitch
+const MC1 = MC;                                            // alias (pulse width patches)
+const ML  = (n) => ({ vp2Src:6, vp2Dst:5, vp2Int:n });   // Mod→LFO2Freq
+const MA  = (n) => ({ vp2Src:6, vp2Dst:3, vp2Int:n });   // Mod→Amp
+const MFE = MA;                                            // alias (amp swell)
 
 // ─── A BANK: 128 Thick Wumpy Daft Punk Basses ────────────────────────────────
 //
