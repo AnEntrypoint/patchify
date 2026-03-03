@@ -142,24 +142,28 @@ const patches = [
   { name:"OB Funk",      osc1Wave:2, osc1Level:118, filterCutoff:26, filterResonance:12, filterEgInt:46, filterDecay:18, ampDecay:60, ampSustain:82, ampRelease:30, transpose:-12, vibratoIntensity:7,  ...MFE(50) },
   { name:"Wet Wump",     osc1Wave:0, osc1Level:118, filterCutoff:30, filterResonance:14, filterEgInt:48, filterDecay:14, ampDecay:54, ampSustain:78, ampRelease:26, transpose:-12, vibratoIntensity:8,  ...MC(56) },
 
-  // ─ Category 7: Acid/303 (patches 96-111) ────────────────────────────────
-  // High resonance (20-35), sweeping character, TB-303 style.
-  { name:"Acid Bass",    osc1Wave:0, osc1Level:115, filterCutoff:30, filterResonance:22, filterEgInt:45, filterDecay:18, ampDecay:55, ampSustain:75, ampRelease:22, transpose:-12, vibratoIntensity:5,  ...MC(58) },
-  { name:"303 Classic",  osc1Wave:0, osc1Level:115, filterCutoff:25, filterResonance:28, filterEgInt:50, filterDecay:14, ampDecay:50, ampSustain:72, ampRelease:20, transpose:-12, vibratoIntensity:4,  ...MC(62) },
-  { name:"Squelch",      osc1Wave:0, osc1Level:115, filterCutoff:20, filterResonance:30, filterEgInt:55, filterDecay:12, ampDecay:48, ampSustain:70, ampRelease:18, transpose:-12, vibratoIntensity:6,  ...MFE(55) },
-  { name:"Acid Sine",    osc1Wave:3, osc1Level:118, filterCutoff:32, filterResonance:24, filterEgInt:42, filterDecay:16, ampDecay:58, ampSustain:76, ampRelease:24, transpose:-12, vibratoIntensity:5,  ...MC(55) },
-  { name:"Rezo Bass",    osc1Wave:0, osc1Level:115, filterCutoff:28, filterResonance:26, filterEgInt:48, filterDecay:15, ampDecay:52, ampSustain:73, ampRelease:20, transpose:-12, vibratoIntensity:4,  ...MC(60) },
-  { name:"Peaky Low",    osc1Wave:0, osc1Level:115, filterCutoff:22, filterResonance:32, filterEgInt:52, filterDecay:12, ampDecay:48, ampSustain:70, ampRelease:18, transpose:-12, vibratoIntensity:5,  ...MFE(58) },
-  { name:"Acid Tri",     osc1Wave:2, osc1Level:118, filterCutoff:30, filterResonance:22, filterEgInt:44, filterDecay:16, ampDecay:55, ampSustain:74, ampRelease:22, transpose:-12, vibratoIntensity:6,  ...MC(56) },
-  { name:"Bubble Low",   osc1Wave:0, osc1Level:115, filterCutoff:35, filterResonance:25, filterEgInt:40, filterDecay:20, ampDecay:58, ampSustain:76, ampRelease:25, transpose:-12, vibratoIntensity:5,  ...MC(54) },
-  { name:"Resonant Sub", osc1Wave:3, osc1Level:118, filterCutoff:28, filterResonance:20, filterEgInt:38, filterDecay:18, ampDecay:62, ampSustain:78, ampRelease:26, transpose:-12, vibratoIntensity:4,  ...MC(52) },
-  { name:"Acid Pulse",   osc1Wave:1, osc1Level:115, filterCutoff:26, filterResonance:28, filterEgInt:50, filterDecay:14, ampDecay:50, ampSustain:72, ampRelease:20, transpose:-12, vibratoIntensity:5,  ...MFE(56) },
-  { name:"Sharp Acid",   osc1Wave:0, osc1Level:115, filterCutoff:18, filterResonance:34, filterEgInt:55, filterDecay:10, ampDecay:45, ampSustain:68, ampRelease:16, transpose:-12, vibratoIntensity:4,  ...MC(63) },
-  { name:"Dark Acid",    osc1Wave:0, osc1Level:118, filterCutoff:20, filterResonance:30, filterEgInt:48, filterDecay:14, ampDecay:50, ampSustain:72, ampRelease:20, transpose:-12, vibratoIntensity:5,  ...MFE(54) },
-  { name:"Wet Acid",     osc1Wave:0, osc1Level:115, filterCutoff:30, filterResonance:24, filterEgInt:46, filterDecay:16, ampDecay:54, ampSustain:74, ampRelease:22, transpose:-12, vibratoIntensity:6,  ...MC(58) },
-  { name:"Acid Roll",    osc1Wave:0, osc1Level:115, filterCutoff:24, filterResonance:26, filterEgInt:44, filterDecay:18, ampDecay:52, ampSustain:73, ampRelease:22, transpose:-12, vibratoIntensity:4,  ...MC(56) },
-  { name:"Snarling Sq",  osc1Wave:1, osc1Level:115, filterCutoff:22, filterResonance:30, filterEgInt:52, filterDecay:12, ampDecay:48, ampSustain:70, ampRelease:18, transpose:-12, vibratoIntensity:5,  ...MFE(58) },
-  { name:"Acid Wump",    osc1Wave:0, osc1Level:118, filterCutoff:28, filterResonance:22, filterEgInt:42, filterDecay:18, ampDecay:56, ampSustain:76, ampRelease:24, transpose:-12, vibratoIntensity:6,  ...MC(56) },
+  // ─ Category 7: Pluck/Wub/Stab/Sub (patches 96-111) ─────────────────────
+  // Musical basses replacing high-res acid. Resonance max 15. All usable in production.
+  // Pluck basses (96-99): short decay, percussive, finger-pluck feel
+  { name:"Pluck Bass",   osc1Wave:0, osc1Level:115, filterCutoff:55, filterResonance:8,  filterEgInt:40, filterDecay:10, ampAttack:0, ampDecay:35, ampSustain:0,  ampRelease:20, transpose:-12, vibratoIntensity:0, ...MC(45) },
+  { name:"Snap Bass",    osc1Wave:3, osc1Level:118, filterCutoff:60, filterResonance:10, filterEgInt:35, filterDecay:8,  ampAttack:0, ampDecay:30, ampSustain:0,  ampRelease:18, transpose:-12, vibratoIntensity:0, ...MC(40) },
+  { name:"Pick Bass",    osc1Wave:0, osc1Level:115, filterCutoff:65, filterResonance:12, filterEgInt:45, filterDecay:12, ampAttack:0, ampDecay:40, ampSustain:0,  ampRelease:22, transpose:-12, vibratoIntensity:0, ...MFE(42) },
+  { name:"Clap Bass",    osc1Wave:2, osc1Level:118, filterCutoff:50, filterResonance:7,  filterEgInt:30, filterDecay:9,  ampAttack:0, ampDecay:32, ampSustain:0,  ampRelease:18, transpose:-12, vibratoIntensity:0, ...MC(38) },
+  // Wub basses (100-103): LFO on cutoff, slow wobble, musical modulation
+  { name:"Wub Bass",     osc1Wave:0, osc1Level:115, filterCutoff:35, filterResonance:10, filterEgInt:20, filterDecay:25, ampDecay:65, ampSustain:82, ampRelease:32, transpose:-12, lfo1Wave:0, lfo1Rate:15, vp1Src:4, vp1Dst:2, vp1Int:35, ...ML(40) },
+  { name:"Slow Wub",     osc1Wave:3, osc1Level:118, filterCutoff:30, filterResonance:8,  filterEgInt:15, filterDecay:30, ampDecay:70, ampSustain:86, ampRelease:38, transpose:-12, lfo1Wave:2, lfo1Rate:10, vp1Src:4, vp1Dst:2, vp1Int:30, ...ML(38) },
+  { name:"Wub Pulse",    osc1Wave:1, osc1Level:115, filterCutoff:38, filterResonance:12, filterEgInt:22, filterDecay:22, ampDecay:62, ampSustain:80, ampRelease:30, transpose:-12, lfo1Wave:0, lfo1Rate:20, vp1Src:4, vp1Dst:2, vp1Int:40, ...ML(42) },
+  { name:"Deep Wub",     osc1Wave:3, osc1Level:120, filterCutoff:28, filterResonance:6,  filterEgInt:12, filterDecay:35, ampDecay:75, ampSustain:88, ampRelease:42, transpose:-12, lfo1Wave:2, lfo1Rate:12, vp1Src:4, vp1Dst:2, vp1Int:28, ...ML(35) },
+  // Stab basses (104-107): very short AEG, punchy hits, rhythmic
+  { name:"Stab Bass",    osc1Wave:0, osc1Level:118, filterCutoff:58, filterResonance:10, filterEgInt:42, filterDecay:8,  ampAttack:0, ampDecay:25, ampSustain:0,  ampRelease:14, transpose:-12, vibratoIntensity:0, ...MC(50) },
+  { name:"Hit Bass",     osc1Wave:0, osc1Level:115, filterCutoff:65, filterResonance:12, filterEgInt:50, filterDecay:7,  ampAttack:0, ampDecay:22, ampSustain:0,  ampRelease:12, transpose:-12, vibratoIntensity:0, ...MFE(48) },
+  { name:"Chop Stab",    osc1Wave:1, osc1Level:115, filterCutoff:52, filterResonance:9,  filterEgInt:38, filterDecay:10, ampAttack:0, ampDecay:28, ampSustain:0,  ampRelease:15, transpose:-12, vibratoIntensity:0, ...MC(45) },
+  { name:"Brass Stab",   osc1Wave:0, osc1Level:118, filterCutoff:70, filterResonance:8,  filterEgInt:32, filterDecay:12, ampAttack:1, ampDecay:30, ampSustain:5,  ampRelease:16, transpose:-12, vibratoIntensity:0, ...MC(42) },
+  // Sub octave basses (108-111): transpose -24, pure deep, foundational
+  { name:"Sub Oct",      osc1Wave:3, osc1Level:120, filterCutoff:22, filterResonance:4,  filterEgInt:10, filterDecay:40, ampDecay:90, ampSustain:95, ampRelease:50, transpose:-24, vibratoIntensity:0, ...MC(30) },
+  { name:"Deep Sub",     osc1Wave:3, osc1Level:122, filterCutoff:18, filterResonance:3,  filterEgInt:8,  filterDecay:45, ampDecay:95, ampSustain:98, ampRelease:55, transpose:-24, vibratoIntensity:0, ...MC(25) },
+  { name:"Sub Sine",     osc1Wave:3, osc1Level:120, filterCutoff:25, filterResonance:5,  filterEgInt:12, filterDecay:38, ampDecay:88, ampSustain:94, ampRelease:48, transpose:-24, vibratoIntensity:0, ...ML(28) },
+  { name:"Floor Sub",    osc1Wave:3, osc1Level:122, filterCutoff:20, filterResonance:4,  filterEgInt:6,  filterDecay:50, ampDecay:100,ampSustain:100,ampRelease:60, transpose:-24, vibratoIntensity:0, ...MC(22) },
 
   // ─ Category 8: DWGS Digital (patches 112-127) ───────────────────────────
   // DWGS wave (osc1Wave=5), digital warmth. Various dwgsWave types.
@@ -257,14 +261,16 @@ const patches = [
   { name:"Dub Stab",     osc1Wave:0, osc1Level:115, filterCutoff:68, filterResonance:25, filterEgInt:30, filterDecay:22, ampDecay:62, ampSustain:50, ampRelease:45, vp2Src:6, vp2Dst:4, vp2Int:40 },
   { name:"Echo Lead",    osc1Wave:0, osc1Level:112, filterCutoff:75, filterResonance:28, filterEgInt:32, filterDecay:20, ampDecay:65, ampSustain:52, ampRelease:48, vp2Src:6, vp2Dst:4, vp2Int:42 },
   { name:"Dub Organ",    osc1Wave:1, osc1Level:115, filterCutoff:80, filterResonance:10, filterEgInt:10, filterDecay:30, ampDecay:85, ampSustain:75, ampRelease:65, vp2Src:6, vp2Dst:5, vp2Int:35 },
-  { name:"Bubbling",     osc1Wave:3, osc1Level:105, filterCutoff:55, filterResonance:55, filterEgInt:40, filterDecay:15, ampDecay:42, ampSustain:25, ampRelease:20, vp2Src:6, vp2Dst:4, vp2Int:55 },
-  { name:"Gurgle",       osc1Wave:3, osc1Level:105, filterCutoff:50, filterResonance:60, filterEgInt:45, filterDecay:12, ampDecay:38, ampSustain:22, ampRelease:18, vp2Src:6, vp2Dst:4, vp2Int:58 },
-  { name:"Percolate",    osc1Wave:0, osc1Level:108, filterCutoff:58, filterResonance:50, filterEgInt:38, filterDecay:16, ampDecay:45, ampSustain:28, ampRelease:22, vp2Src:6, vp2Dst:4, vp2Int:52 },
-  { name:"Fizz",         osc1Wave:6, osc1Level:105, filterCutoff:65, filterResonance:40, filterEgInt:30, filterDecay:20, ampDecay:50, ampSustain:30, ampRelease:25, vp2Src:6, vp2Dst:4, vp2Int:48 },
-  { name:"Drip",         osc1Wave:3, osc1Level:108, filterCutoff:72, filterResonance:45, filterEgInt:35, filterDecay:14, ampDecay:40, ampSustain:20, ampRelease:18, vp2Src:6, vp2Dst:4, vp2Int:50 },
-  { name:"Boil",         osc1Wave:0, osc1Level:105, filterCutoff:60, filterResonance:52, filterEgInt:42, filterDecay:14, ampDecay:42, ampSustain:24, ampRelease:20, vp2Src:6, vp2Dst:4, vp2Int:55 },
-  { name:"Brook",        osc1Wave:6, osc1Level:102, filterCutoff:68, filterResonance:35, filterEgInt:28, filterDecay:22, ampDecay:55, ampSustain:35, ampRelease:28, vp2Src:6, vp2Dst:4, vp2Int:45 },
-  { name:"Ocean",        osc1Wave:6, osc1Level:100, filterCutoff:55, filterResonance:25, filterEgInt:20, filterDecay:35, ampAttack:15, ampDecay:75, ampSustain:60, ampRelease:65, vp2Src:6, vp2Dst:7, vp2Int:30 },
+  // Bubble FX: HPF (filterType:3) + LFO→pitch for wobbly/watery character
+  // vp1: LFO1→PITCH (src=4,dst=0); vp2: ModWheel→LFO1FREQ (src=6,dst=4)
+  { name:"Bubble Slow",  osc1Wave:3, osc1Level:108, filterType:3, filterCutoff:90, filterResonance:15, filterEgInt:10, filterDecay:30, ampDecay:70, ampSustain:65, ampRelease:40, lfo1Wave:2, lfo1Rate:18, vp1Src:4, vp1Dst:0, vp1Int:15, vp2Src:6, vp2Dst:4, vp2Int:50 },
+  { name:"Bubble Med",   osc1Wave:3, osc1Level:108, filterType:3, filterCutoff:95, filterResonance:18, filterEgInt:12, filterDecay:25, ampDecay:65, ampSustain:60, ampRelease:38, lfo1Wave:2, lfo1Rate:30, vp1Src:4, vp1Dst:0, vp1Int:18, vp2Src:6, vp2Dst:4, vp2Int:50 },
+  { name:"Bubble Fast",  osc1Wave:3, osc1Level:108, filterType:3, filterCutoff:100, filterResonance:20, filterEgInt:15, filterDecay:20, ampDecay:55, ampSustain:55, ampRelease:32, lfo1Wave:2, lfo1Rate:50, vp1Src:4, vp1Dst:0, vp1Int:22, vp2Src:6, vp2Dst:4, vp2Int:50 },
+  { name:"Bubble Sine",  osc1Wave:3, osc1Level:110, filterType:3, filterCutoff:92, filterResonance:12, filterEgInt:8,  filterDecay:35, ampDecay:75, ampSustain:68, ampRelease:45, lfo1Wave:0, lfo1Rate:22, vp1Src:4, vp1Dst:0, vp1Int:20, vp2Src:6, vp2Dst:4, vp2Int:48 },
+  { name:"Gurgle HPF",   osc1Wave:2, osc1Level:106, filterType:3, filterCutoff:88, filterResonance:22, filterEgInt:18, filterDecay:22, ampDecay:60, ampSustain:50, ampRelease:30, lfo1Wave:2, lfo1Rate:40, vp1Src:4, vp1Dst:0, vp1Int:25, vp2Src:6, vp2Dst:4, vp2Int:52 },
+  { name:"Water Drop",   osc1Wave:3, osc1Level:105, filterType:3, filterCutoff:105, filterResonance:25, filterEgInt:20, filterDecay:15, ampAttack:0, ampDecay:40, ampSustain:20, ampRelease:25, lfo1Wave:1, lfo1Rate:60, vp1Src:4, vp1Dst:0, vp1Int:28, vp2Src:6, vp2Dst:4, vp2Int:55 },
+  { name:"Drip HPF",     osc1Wave:3, osc1Level:105, filterType:3, filterCutoff:110, filterResonance:20, filterEgInt:15, filterDecay:12, ampAttack:0, ampDecay:35, ampSustain:15, ampRelease:20, lfo1Wave:2, lfo1Rate:45, vp1Src:4, vp1Dst:0, vp1Int:22, vp2Src:6, vp2Dst:4, vp2Int:52 },
+  { name:"Fizz HPF",     osc1Wave:6, osc1Level:100, filterType:3, filterCutoff:100, filterResonance:14, filterEgInt:10, filterDecay:20, ampAttack:8, ampDecay:65, ampSustain:55, ampRelease:50, lfo1Wave:2, lfo1Rate:35, vp1Src:4, vp1Dst:0, vp1Int:18, vp2Src:6, vp2Dst:4, vp2Int:48 },
   { name:"Psy Chorus",   osc1Wave:0, osc1Level:112, filterCutoff:55, filterResonance:30, filterEgInt:28, filterDecay:30, ampAttack:10, ampDecay:80, ampSustain:68, ampRelease:60, vp2Src:6, vp2Dst:7, vp2Int:35 },
   { name:"Spiral FX",    osc1Wave:2, osc1Level:108, filterCutoff:48, filterResonance:35, filterEgInt:32, filterDecay:25, ampAttack:12, ampDecay:75, ampSustain:62, ampRelease:58, vp2Src:6, vp2Dst:7, vp2Int:38 },
   { name:"Trippy",       osc1Wave:0, osc1Level:110, filterCutoff:52, filterResonance:28, filterEgInt:25, filterDecay:32, ampAttack:15, ampDecay:82, ampSustain:70, ampRelease:65, vp2Src:6, vp2Dst:7, vp2Int:32 },
